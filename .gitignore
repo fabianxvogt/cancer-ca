@@ -16,3 +16,16 @@ build/
 *.log
 *.out
 .DS_Store
+
+# LaTeX auxiliary artifacts
+*.synctex.gz
+*.blg
+*.bbl
+*.toc
+
+# Debug / run output dumps
+*_output.txt
+test_output.txt
+
+# Editor swap files
+*.swp
