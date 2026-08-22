@@ -224,8 +224,10 @@ Cure may not be achievable – not because we lack technology, but because it's 
 ### Requirements
 
 ```bash
-pip install numpy matplotlib scipy pandas scikit-learn
+pip install numpy matplotlib scipy pandas scikit-learn seaborn
 ```
+
+`seaborn` is required by `robustness_analysis.py` for its heatmap figures; the basic simulation and core experiment do not use those plots.
 
 ### Run Basic Simulation
 
