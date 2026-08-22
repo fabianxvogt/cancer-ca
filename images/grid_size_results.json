@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "size": 60,
+      "mtd_metric": 0.9985532860835362,
+      "metro_metric": 0.2519497466955637,
+      "mtd_resistance": 0.5223880597014925,
+      "metro_resistance": 0.04212454212454213
+    },
+    {
+      "size": 120,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.8146664710668958,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.2521489971346705
+    },
+    {
+      "size": 240,
+      "mtd_metric": 0.461248266674415,
+      "metro_metric": 0.7545552809402317,
+      "mtd_resistance": 0.9024289831206258,
+      "metro_resistance": 0.7830520393811533
+    }
+  ]
+}

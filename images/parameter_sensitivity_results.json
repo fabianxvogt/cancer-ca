@@ -1,0 +1,53 @@
+{
+  "results": [
+    {
+      "metronomic_dose": 0.01,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.8146664710668958,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.2521489971346705
+    },
+    {
+      "metronomic_dose": 0.02,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.8146664710668958,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.2521489971346705
+    },
+    {
+      "metronomic_dose": 0.03,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.8146664710668958,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.2521489971346705
+    },
+    {
+      "metronomic_dose": 0.05,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.8146664710668958,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.2521489971346705
+    },
+    {
+      "metronomic_dose": 0.1,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.9821926503209302,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.578397212543554
+    },
+    {
+      "metronomic_dose": 0.2,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.9653303273426694,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.6091743119266055
+    },
+    {
+      "metronomic_dose": 0.3,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.9510631830378232,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.6294896030245747
+    }
+  ]
+}

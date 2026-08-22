@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "scenario": "Baseline\\n(Irreversible)",
+      "resurrection_prob": 0.0,
+      "reversion_prob": 0.0,
+      "mtd_metric": 0.8776811489361288,
+      "metro_metric": 0.8146664710668958,
+      "mtd_resistance": 0.702928870292887,
+      "metro_resistance": 0.2521489971346705
+    },
+    {
+      "scenario": "Resurrection\\nOnly",
+      "resurrection_prob": 0.01,
+      "reversion_prob": 0.0,
+      "mtd_metric": 0.9572248551980508,
+      "metro_metric": 0.9484315376044314,
+      "mtd_resistance": 0.3788487282463186,
+      "metro_resistance": 0.36711552090715804
+    },
+    {
+      "scenario": "Reversion\\nOnly",
+      "resurrection_prob": 0.0,
+      "reversion_prob": 0.001,
+      "mtd_metric": 0.9999450736399312,
+      "metro_metric": 0.7659318641707891,
+      "mtd_resistance": 0.4956369982547993,
+      "metro_resistance": 0.2231800766283525
+    },
+    {
+      "scenario": "Both\\nMechanisms",
+      "resurrection_prob": 0.01,
+      "reversion_prob": 0.001,
+      "mtd_metric": 0.6911361227419887,
+      "metro_metric": 0.6785979371443914,
+      "mtd_resistance": 0.18511326860841423,
+      "metro_resistance": 0.17932489451476794
+    }
+  ]
+}
