@@ -9,6 +9,7 @@ support scientific interpretation of the bounded run.
 from __future__ import annotations
 
 import argparse
+import ast
 import importlib.util
 import json
 from importlib import metadata
@@ -51,6 +52,8 @@ REQUIRED_IMPORTS = {
     "pandas": "pandas",
 }
 REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
+CORE_EXPERIMENT_PATH = Path(__file__).resolve().parents[1] / "core_experiment.py"
+PROJECT_MODULES = frozenset({"tumor_ca", "stability_metrics"})
 
 
 def _normalize_distribution_name(name: str) -> str:
@@ -109,6 +112,55 @@ def required_dependency_pin_gaps(
         for distribution in REQUIRED_IMPORTS.values()
     }
     return tuple(sorted(required_distributions - pins.keys()))
+
+
+def direct_imported_modules(path: Path = CORE_EXPERIMENT_PATH) -> tuple[str, ...]:
+    """Return direct top-level imports from the bounded runner's source.
+
+    This is a source-only inspection. It excludes the two project modules that
+    the runner imports locally and does not import any discovered module.
+    """
+
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    modules: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            modules.update(alias.name.split(".", 1)[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            modules.add(node.module.split(".", 1)[0])
+    return tuple(sorted(modules - PROJECT_MODULES))
+
+
+def source_dependency_pin_gaps(
+    path: Path = CORE_EXPERIMENT_PATH,
+    requirements: Mapping[str, str] | None = None,
+    import_to_distribution: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    """Return static direct-import gaps in the runner's exact pin coverage.
+
+    The result is metadata only: it parses source and requirements text, does
+    not import dependencies, execute the model, or establish comparability.
+    """
+
+    pins = (
+        pinned_requirements()
+        if requirements is None
+        else {
+            _normalize_distribution_name(name): version
+            for name, version in requirements.items()
+        }
+    )
+    import_map = REQUIRED_IMPORTS if import_to_distribution is None else import_to_distribution
+    gaps: list[str] = []
+    for module in direct_imported_modules(path):
+        distribution = import_map.get(module)
+        if distribution is None:
+            gaps.append(f"{module} has no distribution mapping")
+            continue
+        normalized_distribution = _normalize_distribution_name(distribution)
+        if normalized_distribution not in pins:
+            gaps.append(f"{module} -> {distribution}")
+    return tuple(gaps)
 
 
 def dependency_version_mismatches(
@@ -198,6 +250,14 @@ def run_smoke(
         raise ValueError("size must be positive")
     if steps < THERAPY_START + 1:
         raise ValueError(f"steps must be at least {THERAPY_START + 1}")
+
+    source_pin_gaps = source_dependency_pin_gaps()
+    if source_pin_gaps:
+        details = ", ".join(source_pin_gaps)
+        raise RuntimeError(
+            "core_experiment.py direct imports lack exact distribution pins: "
+            f"{details}"
+        )
 
     pin_gaps = required_dependency_pin_gaps()
     if pin_gaps:

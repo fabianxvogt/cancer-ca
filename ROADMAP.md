@@ -12,6 +12,7 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [x] Add a dependency-aware bounded structural smoke entry point with focused contract tests.
 - [x] Verify exact installed dependency versions against `requirements.txt` in the structural smoke.
 - [x] Verify every required smoke import has an exact distribution pin before environment checks.
+- [x] Check direct `core_experiment.py` imports against the distribution-pin map without importing dependencies.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 

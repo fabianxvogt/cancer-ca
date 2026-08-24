@@ -9,8 +9,10 @@ from scripts.smoke_core_experiment import (
     EXPECTED_STRATEGIES,
     THERAPY_START,
     dependency_version_mismatches,
+    direct_imported_modules,
     pinned_requirements,
     required_dependency_pin_gaps,
+    source_dependency_pin_gaps,
     validate_results,
 )
 
@@ -104,3 +106,25 @@ def test_required_dependency_pin_gaps_reports_missing_distribution_pins():
     )
 
     assert gaps == ("matplotlib", "pandas", "scipy")
+
+
+def test_direct_import_contract_excludes_project_modules_and_finds_runner_deps():
+    assert direct_imported_modules() == ("matplotlib", "numpy", "pandas")
+    assert source_dependency_pin_gaps() == ()
+
+
+def test_source_dependency_pin_gaps_reports_an_unpinned_direct_import():
+    gaps = source_dependency_pin_gaps(
+        requirements={"numpy": "2.0.2", "matplotlib": "3.9.4"}
+    )
+
+    assert gaps == ("pandas -> pandas",)
+
+
+def test_source_dependency_pin_gaps_reports_missing_distribution_mapping(tmp_path: Path):
+    source = tmp_path / "runner.py"
+    source.write_text("import mystery_package\n", encoding="utf-8")
+
+    assert source_dependency_pin_gaps(path=source, requirements={}) == (
+        "mystery_package has no distribution mapping",
+    )

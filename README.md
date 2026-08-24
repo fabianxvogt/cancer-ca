@@ -110,6 +110,11 @@ the paper's metrics, correlations, or biological conclusions. If a dependency is
 missing or its version drifts, the command exits without importing the research
 runner and points to the pinned `requirements.txt` environment.
 
+Before that environment check, the smoke also parses `core_experiment.py` to ensure
+its direct third-party imports have distribution mappings and exact pins. This is a
+source/metadata contract only; it does not import packages, run trajectories, or
+establish scientific comparability.
+
 The division-contract command reads `tumor_ca.py` as source and reports the
 legacy raw multiplier, gate scale, and derived threshold before any calibration
 change. It does not import the model, run a trajectory, or validate a scientific
