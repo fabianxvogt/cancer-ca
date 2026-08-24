@@ -45,6 +45,12 @@ packages, execute a trajectory, or establish scientific comparability. Its
 evidence is recorded in
 [`agent-wave-2026-08-25-source-pin-coverage.md`](agent-wave-2026-08-25-source-pin-coverage.md).
 
+The unresolved semantic choice is captured in the
+[`local_division_rate` decision memo](decision-memo-local-division-rate.md).
+It compares probability, rate/propensity, and legacy eligibility-score
+interpretations and specifies the smallest pinned-environment experiment after
+human approval. It does not change the model or claim biological validity.
+
 The same preflight parses the existing dual-metric supplementary figure script,
 `figure_S1_metric_dependence.py`, and checks its direct imports against the same
 exact pins. This does not execute the figure or verify its numerical results. Its
