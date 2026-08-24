@@ -6,10 +6,10 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 
 - [ ] Publish repo as `fabianxvogt/cancer-ca` (this prep: gitignore, README, LICENSE, layout)
 - [ ] Calibrate `local_division_rate` semantics (probability vs rate scale) against intended
-      behavior; add regression coverage for untreated trajectories before any model change
-      (see `docs/README.md`)
-- [ ] Pin/verify dependency versions; add a minimal smoke test that runs
-      `core_experiment.py` on a small grid
+      behavior (see `docs/README.md`)
+  - [x] Add seeded untreated-trajectory regression coverage before any model change
+- [x] Add a minimal legacy-semantics smoke test; dependency pinning remains open.
+- [ ] Pin/verify dependency versions; add a small-grid `core_experiment.py` smoke run.
 
 ## Next
 
@@ -33,3 +33,5 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [x] Full paper draft (`paper.tex`, 11 pp.) compiling with all 6 figures + supplement
 - [x] Reviewer response round: overclaiming language removed, metric circularity acknowledged
 - [x] Publication prep: .gitignore, publication README, LICENSE (MIT), scratch/ organization
+- [x] 2026-08-24: added a focused regression test for the current default division-gate
+      semantics without changing the model implementation.
