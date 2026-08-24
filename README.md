@@ -92,6 +92,7 @@ pip install -r requirements.txt
 
 ```bash
 python3 scripts/smoke_core_experiment.py  # bounded structural smoke; no scientific claim
+python3 scripts/legacy_division_contract.py  # report legacy calibration semantics; no model run
 python tumor_ca.py                 # basic simulation + emergence demo
 python core_experiment.py          # the 5-strategy response-vs-stability experiment
 python statistical_validation.py   # correlations, CIs, seed reproducibility, sign flip
@@ -106,6 +107,11 @@ intentionally a dependency-aware import/structure check: it does not reproduce
 the paper's metrics, correlations, or biological conclusions. If a dependency is
 missing or its version drifts, the command exits without importing the research
 runner and points to the pinned `requirements.txt` environment.
+
+The division-contract command reads `tumor_ca.py` as source and reports the
+legacy raw multiplier, gate scale, and derived threshold before any calibration
+change. It does not import the model, run a trajectory, or validate a scientific
+result.
 
 Figure ↔ script map:
 

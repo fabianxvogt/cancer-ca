@@ -32,3 +32,11 @@ and empirical limits are recorded in
 The command also verifies that installed distribution versions exactly match
 `requirements.txt`; this is an environment contract, not a claim that the model
 is scientifically validated.
+
+## Calibration contract probe
+
+Run `python3 scripts/legacy_division_contract.py` to inspect the legacy division
+gate without importing dependencies or executing the model. The focused test
+keeps the raw default multiplier, gate scale, and derived threshold explicit;
+it is a pre-change guardrail for calibration, not a probability calibration or
+scientific validation.
