@@ -45,6 +45,12 @@ packages, execute a trajectory, or establish scientific comparability. Its
 evidence is recorded in
 [`agent-wave-2026-08-25-source-pin-coverage.md`](agent-wave-2026-08-25-source-pin-coverage.md).
 
+The same preflight parses the existing dual-metric supplementary figure script,
+`figure_S1_metric_dependence.py`, and checks its direct imports against the same
+exact pins. This does not execute the figure or verify its numerical results. Its
+evidence is recorded in
+[`agent-wave-2026-08-25-dual-metric-preflight.md`](agent-wave-2026-08-25-dual-metric-preflight.md).
+
 ## Calibration contract probe
 
 Run `python3 scripts/legacy_division_contract.py` to inspect the legacy division

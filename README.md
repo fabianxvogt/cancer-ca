@@ -115,6 +115,10 @@ its direct third-party imports have distribution mappings and exact pins. This i
 source/metadata contract only; it does not import packages, run trajectories, or
 establish scientific comparability.
 
+The same source/metadata preflight covers the existing dual-metric supplementary
+figure script, `figure_S1_metric_dependence.py`, before any environment or model
+execution. It does not reproduce the figure or verify its numerical claims.
+
 The division-contract command reads `tumor_ca.py` as source and reports the
 legacy raw multiplier, gate scale, and derived threshold before any calibration
 change. It does not import the model, run a trajectory, or validate a scientific

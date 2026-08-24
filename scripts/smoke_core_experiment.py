@@ -53,7 +53,12 @@ REQUIRED_IMPORTS = {
 }
 REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
 CORE_EXPERIMENT_PATH = Path(__file__).resolve().parents[1] / "core_experiment.py"
+DUAL_METRIC_FIGURE_PATH = Path(__file__).resolve().parents[1] / "figure_S1_metric_dependence.py"
 PROJECT_MODULES = frozenset({"tumor_ca", "stability_metrics"})
+SOURCE_PIN_CONTRACTS = {
+    "core_experiment.py": CORE_EXPERIMENT_PATH,
+    "figure_S1_metric_dependence.py": DUAL_METRIC_FIGURE_PATH,
+}
 
 
 def _normalize_distribution_name(name: str) -> str:
@@ -115,7 +120,7 @@ def required_dependency_pin_gaps(
 
 
 def direct_imported_modules(path: Path = CORE_EXPERIMENT_PATH) -> tuple[str, ...]:
-    """Return direct top-level imports from the bounded runner's source.
+    """Return direct top-level imports from a project source file.
 
     This is a source-only inspection. It excludes the two project modules that
     the runner imports locally and does not import any discovered module.
@@ -136,7 +141,7 @@ def source_dependency_pin_gaps(
     requirements: Mapping[str, str] | None = None,
     import_to_distribution: Mapping[str, str] | None = None,
 ) -> tuple[str, ...]:
-    """Return static direct-import gaps in the runner's exact pin coverage.
+    """Return static direct-import gaps in a source file's exact pin coverage.
 
     The result is metadata only: it parses source and requirements text, does
     not import dependencies, execute the model, or establish comparability.
@@ -251,13 +256,14 @@ def run_smoke(
     if steps < THERAPY_START + 1:
         raise ValueError(f"steps must be at least {THERAPY_START + 1}")
 
-    source_pin_gaps = source_dependency_pin_gaps()
-    if source_pin_gaps:
-        details = ", ".join(source_pin_gaps)
-        raise RuntimeError(
-            "core_experiment.py direct imports lack exact distribution pins: "
-            f"{details}"
-        )
+    for source_label, source_path in SOURCE_PIN_CONTRACTS.items():
+        source_pin_gaps = source_dependency_pin_gaps(source_path)
+        if source_pin_gaps:
+            details = ", ".join(source_pin_gaps)
+            raise RuntimeError(
+                f"{source_label} direct imports lack exact distribution pins: "
+                f"{details}"
+            )
 
     pin_gaps = required_dependency_pin_gaps()
     if pin_gaps:

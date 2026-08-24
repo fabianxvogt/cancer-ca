@@ -19,6 +19,7 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 ## Next
 
 - [ ] Add dual-metric result to main figures (controllability vs elimination metric side by side)
+  - [x] Add metadata-only direct-import pin preflight for the existing supplementary figure.
 - [ ] Rule ablation studies (which meta-rules drive the tradeoff?)
 - [ ] Widen parameter regime so correlations are not dominated by deterministic coupling
 - [ ] Decide publication venue; update citation section once submitted/accepted
