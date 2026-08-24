@@ -25,3 +25,7 @@ calibration work should replace it only after comparing untreated trajectories.
 The bounded core smoke used the versions pinned in [`../requirements.txt`](../requirements.txt).
 It validates importability and branch execution on a small grid, not the
 scientific conclusions of the full experiment.
+
+The reusable command is `python3 scripts/smoke_core_experiment.py`; its output
+and empirical limits are recorded in
+[`agent-wave-2026-08-25-structural-smoke.md`](agent-wave-2026-08-25-structural-smoke.md).

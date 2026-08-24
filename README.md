@@ -91,12 +91,20 @@ pip install -r requirements.txt
 ```
 
 ```bash
+python3 scripts/smoke_core_experiment.py  # bounded structural smoke; no scientific claim
 python tumor_ca.py                 # basic simulation + emergence demo
 python core_experiment.py          # the 5-strategy response-vs-stability experiment
 python statistical_validation.py   # correlations, CIs, seed reproducibility, sign flip
 python generate_all_figures.py     # regenerates all figures into images/
 pdflatex paper.tex && pdflatex paper.tex   # rebuilds paper.pdf from images/
 ```
+
+The smoke command checks dependency availability, strategy-branch execution, and
+history shape at `size=32`, `steps=205`, `seed=42`. It is intentionally a
+dependency-aware import/structure check: it does not reproduce the paper's
+metrics, correlations, or biological conclusions. If a dependency is missing,
+the command exits without importing the research runner and points to the pinned
+`requirements.txt` environment.
 
 Figure ↔ script map:
 

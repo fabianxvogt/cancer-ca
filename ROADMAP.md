@@ -8,6 +8,7 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [ ] Calibrate `local_division_rate` semantics (probability vs rate scale) against intended
       behavior (see `docs/README.md`)
   - [x] Add seeded untreated-trajectory regression coverage before any model change
+- [x] Add a dependency-aware bounded structural smoke entry point with focused contract tests.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 
