@@ -21,3 +21,7 @@ This is a documented follow-up, not a behavior change. Before changing the model
 Run `python3 -m pytest -q tests/test_legacy_semantics.py` before changing the
 division-rate scale. The test intentionally captures the current default gate;
 calibration work should replace it only after comparing untreated trajectories.
+
+The bounded core smoke used the versions pinned in [`../requirements.txt`](../requirements.txt).
+It validates importability and branch execution on a small grid, not the
+scientific conclusions of the full experiment.

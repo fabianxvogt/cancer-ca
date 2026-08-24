@@ -84,10 +84,10 @@ cancer-ca/
 
 ## Reproducing
 
-Requirements (Python 3, no pinned versions — research code):
+Requirements (Python 3.9+, pinned for reproducible research runs):
 
 ```bash
-pip install numpy matplotlib scipy pandas scikit-learn seaborn
+pip install -r requirements.txt
 ```
 
 ```bash

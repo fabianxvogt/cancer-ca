@@ -8,8 +8,8 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [ ] Calibrate `local_division_rate` semantics (probability vs rate scale) against intended
       behavior (see `docs/README.md`)
   - [x] Add seeded untreated-trajectory regression coverage before any model change
-- [x] Add a minimal legacy-semantics smoke test; dependency pinning remains open.
-- [ ] Pin/verify dependency versions; add a small-grid `core_experiment.py` smoke run.
+- [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
+- [x] Pin the verified research dependency set in `requirements.txt`.
 
 ## Next
 
@@ -35,3 +35,5 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [x] Publication prep: .gitignore, publication README, LICENSE (MIT), scratch/ organization
 - [x] 2026-08-24: added a focused regression test for the current default division-gate
       semantics without changing the model implementation.
+- [x] 2026-08-25: pinned the dependency overlay used by the bounded core smoke;
+      full scientific claims remain outside the smoke's scope.
