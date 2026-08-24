@@ -87,6 +87,30 @@ def pinned_requirements(path: Path = REQUIREMENTS_PATH) -> dict[str, str]:
     return requirements
 
 
+def required_dependency_pin_gaps(
+    requirements: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    """Return required distributions that have no exact requirements pin.
+
+    This is a metadata-only check. It does not import a dependency, execute the
+    model, or establish that any scientific result is reproducible.
+    """
+
+    pins = (
+        pinned_requirements()
+        if requirements is None
+        else {
+            _normalize_distribution_name(name): version
+            for name, version in requirements.items()
+        }
+    )
+    required_distributions = {
+        _normalize_distribution_name(distribution)
+        for distribution in REQUIRED_IMPORTS.values()
+    }
+    return tuple(sorted(required_distributions - pins.keys()))
+
+
 def dependency_version_mismatches(
     requirements: Mapping[str, str] | None = None,
     version_lookup: Any = None,
@@ -174,6 +198,14 @@ def run_smoke(
         raise ValueError("size must be positive")
     if steps < THERAPY_START + 1:
         raise ValueError(f"steps must be at least {THERAPY_START + 1}")
+
+    pin_gaps = required_dependency_pin_gaps()
+    if pin_gaps:
+        names = ", ".join(pin_gaps)
+        raise RuntimeError(
+            "requirements.txt is missing exact pins for required smoke imports: "
+            f"{names}"
+        )
 
     missing = missing_dependencies()
     if missing:

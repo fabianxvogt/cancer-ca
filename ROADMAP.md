@@ -11,6 +11,7 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [x] Add a dependency-light source contract for the legacy division-gate scale.
 - [x] Add a dependency-aware bounded structural smoke entry point with focused contract tests.
 - [x] Verify exact installed dependency versions against `requirements.txt` in the structural smoke.
+- [x] Verify every required smoke import has an exact distribution pin before environment checks.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 
@@ -40,3 +41,5 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
       semantics without changing the model implementation.
 - [x] 2026-08-25: pinned the dependency overlay used by the bounded core smoke;
       full scientific claims remain outside the smoke's scope.
+- [x] 2026-08-25: added metadata-only coverage for required smoke-import pins;
+      this does not imply scientific comparability.

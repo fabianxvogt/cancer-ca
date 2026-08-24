@@ -33,6 +33,12 @@ The command also verifies that installed distribution versions exactly match
 `requirements.txt`; this is an environment contract, not a claim that the model
 is scientifically validated.
 
+The smoke checks required-import pin coverage before inspecting the interpreter.
+That check only compares the static import-to-distribution map with exact entries
+in `requirements.txt`; it does not import dependencies, run the model, or imply
+that results are scientifically comparable. Its evidence is recorded in
+[`agent-wave-2026-08-25-pin-coverage.md`](agent-wave-2026-08-25-pin-coverage.md).
+
 ## Calibration contract probe
 
 Run `python3 scripts/legacy_division_contract.py` to inspect the legacy division

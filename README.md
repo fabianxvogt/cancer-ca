@@ -100,10 +100,12 @@ python generate_all_figures.py     # regenerates all figures into images/
 pdflatex paper.tex && pdflatex paper.tex   # rebuilds paper.pdf from images/
 ```
 
-The smoke command checks dependency availability, exact installed versions against
+The smoke command checks that every required scientific import has an exact
+distribution pin, dependency availability, exact installed versions against
 `requirements.txt`, strategy-branch execution, and history shape at `size=32`,
 `steps=205`, `seed=42`. Its JSON summary includes the verified pins. It is
-intentionally a dependency-aware import/structure check: it does not reproduce
+intentionally a dependency-aware import/structure check: the pin-coverage check is
+metadata-only, and the command does not reproduce
 the paper's metrics, correlations, or biological conclusions. If a dependency is
 missing or its version drifts, the command exits without importing the research
 runner and points to the pinned `requirements.txt` environment.

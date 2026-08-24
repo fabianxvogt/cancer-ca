@@ -10,6 +10,7 @@ from scripts.smoke_core_experiment import (
     THERAPY_START,
     dependency_version_mismatches,
     pinned_requirements,
+    required_dependency_pin_gaps,
     validate_results,
 )
 
@@ -88,3 +89,18 @@ def test_pinned_requirements_rejects_unpinned_lines(tmp_path: Path):
 
     with pytest.raises(ValueError, match="exact name==version pin"):
         pinned_requirements(requirements)
+
+
+def test_required_dependency_pin_gaps_accepts_current_requirements():
+    assert required_dependency_pin_gaps() == ()
+
+
+def test_required_dependency_pin_gaps_reports_missing_distribution_pins():
+    gaps = required_dependency_pin_gaps(
+        {
+            "numpy": "2.0.2",
+            "scikit_learn": "1.6.1",
+        }
+    )
+
+    assert gaps == ("matplotlib", "pandas", "scipy")
