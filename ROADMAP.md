@@ -4,7 +4,8 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 
 ## Now
 
-- [ ] Publish repo as `fabianxvogt/cancer-ca` (this prep: gitignore, README, LICENSE, layout)
+- [x] Publish repo as `fabianxvogt/cancer-ca` (published 2026-08-22; public
+  remote and push-clean state verified)
 - [ ] Calibrate `local_division_rate` semantics (probability vs rate scale) against intended
       behavior (see `docs/README.md`)
   - [x] Add seeded untreated-trajectory regression coverage before any model change
@@ -45,3 +46,5 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
       full scientific claims remain outside the smoke's scope.
 - [x] 2026-08-25: added metadata-only coverage for required smoke-import pins;
       this does not imply scientific comparability.
+- [x] 2026-08-25: reconciled the publication checkbox with the root portfolio
+      record and verified the public remote/push-clean state.
