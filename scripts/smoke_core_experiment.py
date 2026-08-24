@@ -11,6 +11,9 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+from importlib import metadata
+from pathlib import Path
+import re
 import sys
 from contextlib import redirect_stdout
 from io import StringIO
@@ -47,6 +50,63 @@ REQUIRED_IMPORTS = {
     "sklearn": "scikit-learn",
     "pandas": "pandas",
 }
+REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
+
+
+def _normalize_distribution_name(name: str) -> str:
+    """Normalize a distribution name using the packaging name convention."""
+
+    return re.sub(r"[-_.]+", "-", name.strip()).lower()
+
+
+def pinned_requirements(path: Path = REQUIREMENTS_PATH) -> dict[str, str]:
+    """Read exact ``name==version`` pins from the research requirements file."""
+
+    requirements: dict[str, str] = {}
+    for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        line = raw_line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        if "==" not in line:
+            raise ValueError(
+                f"{path}:{line_number}: expected an exact name==version pin"
+            )
+        raw_name, raw_version = line.split("==", 1)
+        name = _normalize_distribution_name(raw_name)
+        version = raw_version.strip()
+        if not name or not version or re.search(r"\s", version):
+            raise ValueError(
+                f"{path}:{line_number}: invalid exact name==version pin"
+            )
+        previous = requirements.get(name)
+        if previous is not None and previous != version:
+            raise ValueError(f"{path}:{line_number}: conflicting pin for {name}")
+        requirements[name] = version
+    if not requirements:
+        raise ValueError(f"{path}: no exact dependency pins found")
+    return requirements
+
+
+def dependency_version_mismatches(
+    requirements: Mapping[str, str] | None = None,
+    version_lookup: Any = None,
+) -> tuple[str, ...]:
+    """Return human-readable mismatches between pins and installed distributions."""
+
+    expected = dict(pinned_requirements() if requirements is None else requirements)
+    lookup = metadata.version if version_lookup is None else version_lookup
+    mismatches: list[str] = []
+    for name, expected_version in sorted(expected.items()):
+        try:
+            actual_version = lookup(name)
+        except metadata.PackageNotFoundError:
+            mismatches.append(f"{name} missing (expected {expected_version})")
+            continue
+        if actual_version != expected_version:
+            mismatches.append(
+                f"{name}=={actual_version} installed (expected {expected_version})"
+            )
+    return tuple(mismatches)
 
 
 def missing_dependencies() -> tuple[str, ...]:
@@ -124,6 +184,15 @@ def run_smoke(
             "python3 -m pip install -r requirements.txt"
         )
 
+    mismatches = dependency_version_mismatches()
+    if mismatches:
+        details = "; ".join(mismatches)
+        raise RuntimeError(
+            "research dependency versions do not match requirements.txt: "
+            f"{details}. Recreate the pinned environment with: "
+            "python3 -m pip install -r requirements.txt"
+        )
+
     # Import only after the dependency check so an incomplete environment gets
     # an actionable message rather than a traceback from a transitive import.
     from core_experiment import run_controlled_experiment
@@ -134,7 +203,14 @@ def run_smoke(
         results = run_controlled_experiment(size=size, steps=steps, seed=seed)
 
     summary = validate_results(results, steps=steps)
-    summary.update({"size": size, "steps": steps, "seed": seed})
+    summary.update(
+        {
+            "size": size,
+            "steps": steps,
+            "seed": seed,
+            "dependencies": pinned_requirements(),
+        }
+    )
     return summary
 
 

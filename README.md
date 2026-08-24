@@ -99,12 +99,13 @@ python generate_all_figures.py     # regenerates all figures into images/
 pdflatex paper.tex && pdflatex paper.tex   # rebuilds paper.pdf from images/
 ```
 
-The smoke command checks dependency availability, strategy-branch execution, and
-history shape at `size=32`, `steps=205`, `seed=42`. It is intentionally a
-dependency-aware import/structure check: it does not reproduce the paper's
-metrics, correlations, or biological conclusions. If a dependency is missing,
-the command exits without importing the research runner and points to the pinned
-`requirements.txt` environment.
+The smoke command checks dependency availability, exact installed versions against
+`requirements.txt`, strategy-branch execution, and history shape at `size=32`,
+`steps=205`, `seed=42`. Its JSON summary includes the verified pins. It is
+intentionally a dependency-aware import/structure check: it does not reproduce
+the paper's metrics, correlations, or biological conclusions. If a dependency is
+missing or its version drifts, the command exits without importing the research
+runner and points to the pinned `requirements.txt` environment.
 
 Figure ↔ script map:
 

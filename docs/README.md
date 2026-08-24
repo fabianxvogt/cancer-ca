@@ -29,3 +29,6 @@ scientific conclusions of the full experiment.
 The reusable command is `python3 scripts/smoke_core_experiment.py`; its output
 and empirical limits are recorded in
 [`agent-wave-2026-08-25-structural-smoke.md`](agent-wave-2026-08-25-structural-smoke.md).
+The command also verifies that installed distribution versions exactly match
+`requirements.txt`; this is an environment contract, not a claim that the model
+is scientifically validated.

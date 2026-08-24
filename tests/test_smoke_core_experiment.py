@@ -1,11 +1,15 @@
 """Focused tests for the dependency-aware structural smoke contract."""
 
 import pytest
+from importlib import metadata
+from pathlib import Path
 
 from scripts.smoke_core_experiment import (
     EXPECTED_HISTORY_KEYS,
     EXPECTED_STRATEGIES,
     THERAPY_START,
+    dependency_version_mismatches,
+    pinned_requirements,
     validate_results,
 )
 
@@ -44,3 +48,43 @@ def test_validate_results_rejects_short_smoke():
 
     with pytest.raises(AssertionError, match="history lengths"):
         validate_results(rows, steps=205)
+
+
+def test_pinned_requirements_reads_exact_pins_and_ignores_comments(tmp_path: Path):
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text(
+        "# bounded research environment\n"
+        "Demo_Package==1.2.3  # exact pin\n"
+        "scikit_learn==4.5.6\n",
+        encoding="utf-8",
+    )
+
+    assert pinned_requirements(requirements) == {
+        "demo-package": "1.2.3",
+        "scikit-learn": "4.5.6",
+    }
+
+
+def test_dependency_version_mismatches_reports_missing_and_drift():
+    def lookup(name):
+        if name == "missing-package":
+            raise metadata.PackageNotFoundError(name)
+        return "9.9.9"
+
+    mismatches = dependency_version_mismatches(
+        {"missing-package": "1.0.0", "drifted-package": "2.0.0"},
+        version_lookup=lookup,
+    )
+
+    assert mismatches == (
+        "drifted-package==9.9.9 installed (expected 2.0.0)",
+        "missing-package missing (expected 1.0.0)",
+    )
+
+
+def test_pinned_requirements_rejects_unpinned_lines(tmp_path: Path):
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text("numpy>=2\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="exact name==version pin"):
+        pinned_requirements(requirements)

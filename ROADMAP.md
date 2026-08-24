@@ -9,6 +9,7 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
       behavior (see `docs/README.md`)
   - [x] Add seeded untreated-trajectory regression coverage before any model change
 - [x] Add a dependency-aware bounded structural smoke entry point with focused contract tests.
+- [x] Verify exact installed dependency versions against `requirements.txt` in the structural smoke.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 
