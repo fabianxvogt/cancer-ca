@@ -16,9 +16,12 @@ formula assignment while the probe still reported the earlier expression.
 The probe now inventories method-scope targets from `with`/`async with`,
 `except ... as`, `for`/`async for`, import aliases, and nested function/class
 definitions in addition to the existing forms. Tuple/list/starred targets are
-checked recursively. Comprehension and lambda parameters are intentionally not
-treated as method-scope bindings on the supported Python 3.9 runtime because
-their targets remain in their own nested scope.
+checked recursively. Comprehension targets and lambda parameters/body bindings
+are intentionally not treated as method-scope bindings on the supported Python
+3.9 runtime because their targets remain in their own nested scopes. Lambda
+defaults are evaluated in the enclosing method, and assignment expressions in
+method-level comprehensions bind that method, so both remain visible to the
+contract scan.
 
 ## Evidence
 

@@ -372,6 +372,89 @@ def test_contract_rejects_named_expression_rebinding_of_reported_value(
 @pytest.mark.parametrize(
     "insertion",
     [
+        "            (lambda division_prob: division_prob)(0)\n",
+        "            (lambda: (division_prob := 0))()\n",
+        "            [division_prob for division_prob in ()]\n",
+        "            {division_prob for division_prob in ()}\n",
+        "            (division_prob for division_prob in ())\n",
+        "            (lambda: [(division_prob := 0) for _ in ()])()\n",
+    ],
+)
+def test_contract_ignores_nested_lambda_and_comprehension_bindings(
+    tmp_path: Path, insertion: str
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        + insertion,
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    contract = inspect_contract(candidate)
+
+    assert contract["gate_scale"] == 0.8
+
+
+def test_contract_rejects_comprehension_named_expression_in_method_scope(
+    tmp_path: Path,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            [(division_prob := 0) for _ in ()]\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="multiple assignments found for 'division_prob'"):
+        inspect_contract(candidate)
+
+
+def test_contract_cli_accepts_lambda_local_named_expression(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            (lambda: (division_prob := 0))()\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    assert main(["--path", str(candidate)]) == 0
+
+    captured = capsys.readouterr()
+    assert captured.err == ""
+    assert json.loads(captured.out)["gate_scale"] == 0.8
+
+
+def test_contract_rejects_lambda_default_named_expression_in_method_scope(
+    tmp_path: Path,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            (lambda value=(division_prob := 0): value)()\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="multiple assignments found for 'division_prob'"):
+        inspect_contract(candidate)
+
+
+@pytest.mark.parametrize(
+    "insertion",
+    [
         (
             "            with context() as division_prob:\n"
             "                pass\n"

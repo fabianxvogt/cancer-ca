@@ -165,6 +165,9 @@ recorded in
 The probe also inventories other method-scope binding forms that could replace
 the exact reported value after its formula assignment: `with`/`async with`,
 `except ... as`, `async for`, import aliases, and nested function/class names.
-Comprehension and lambda parameters remain isolated to their nested scopes on
-Python 3.9 and are not treated as method-scope rebindings. Evidence is recorded
-in [`agent-wave-2026-08-25-legacy-binding-forms.md`](agent-wave-2026-08-25-legacy-binding-forms.md).
+Comprehension targets and lambda parameters/body bindings remain isolated to
+their nested scopes. Assignment expressions in a method-level comprehension
+still bind the containing method, while lambda defaults are evaluated in that
+method and remain inspected. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-binding-forms.md`](agent-wave-2026-08-25-legacy-binding-forms.md)
+and [`agent-wave-2026-08-25-legacy-lambda-comprehension-scope.md`](agent-wave-2026-08-25-legacy-lambda-comprehension-scope.md).

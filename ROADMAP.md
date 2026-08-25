@@ -57,6 +57,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] Reject remaining method-scope binding forms (`with`/`except` aliases,
       async loops, import aliases, and nested function/class names) instead of
       silently accepting a later shadowing source construct.
+- [x] Distinguish nested lambda/comprehension scopes from method scope: ignore
+      lambda-body and comprehension-target bindings, retain method-scope
+      comprehension assignment expressions, and inspect lambda defaults.
 
 ## Next
 
@@ -115,3 +118,6 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] 2026-08-25: rejected method-scope `with`/`except` aliases, async-loop
       targets, import aliases, and nested function/class names so the source
       contract cannot ignore later shadowing binders.
+- [x] 2026-08-25: excluded lambda-body and comprehension-target bindings from
+      method-scope rebinding detection while retaining method-scope assignment
+      expressions in comprehensions and lambda defaults.

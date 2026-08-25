@@ -95,7 +95,7 @@ def _scoped_method(tree: ast.AST, class_name: str, method_name: str) -> ast.AST:
 
 
 def _scoped_nodes(method: ast.AST):
-    """Yield statement descendants without entering nested definitions."""
+    """Yield method-scope descendants without entering nested bodies."""
 
     pending = list(method.body)
     while pending:
@@ -105,6 +105,16 @@ def _scoped_nodes(method: ast.AST):
             node,
             (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef),
         ):
+            continue
+        if isinstance(node, ast.Lambda):
+            # Lambda defaults are evaluated in the enclosing method scope, but
+            # the lambda body (including comprehension targets and named
+            # expressions) has its own local scope.
+            pending.extend(
+                default
+                for default in (*node.args.defaults, *node.args.kw_defaults)
+                if default is not None
+            )
             continue
         pending.extend(ast.iter_child_nodes(node))
 
