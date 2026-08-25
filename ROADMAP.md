@@ -31,6 +31,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       this validates the evidence probe only and does not alter model semantics.
 - [x] Keep non-UTF-8 legacy-contract source inputs explicit and non-tracebacking;
       this hardens parsing boundaries only and does not alter model semantics.
+- [x] Reject duplicate legacy-contract assignments instead of silently selecting
+      the first AST match; this hardens evidence parsing only and does not alter
+      model semantics.
 
 ## Next
 

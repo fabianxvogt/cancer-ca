@@ -102,3 +102,9 @@ The probe also treats non-UTF-8 source bytes as blocked input: the API raises
 parsing and reproducibility guard only; it does not normalize source files or
 execute the model. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-encoding-boundary.md`](agent-wave-2026-08-25-legacy-encoding-boundary.md).
+
+It also rejects more than one simple-name or attribute assignment for either
+contract field instead of silently selecting the first AST match. This keeps a
+source file with ambiguous legacy constants blocked without changing model
+behavior; evidence is recorded in
+[`agent-wave-2026-08-25-legacy-duplicate-assignment.md`](agent-wave-2026-08-25-legacy-duplicate-assignment.md).

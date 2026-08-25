@@ -51,14 +51,19 @@ OWNER_DECISION_BOUNDARY = {
 def _assignment(tree: ast.AST, target_name: str) -> ast.AST:
     """Return the value assigned to a simple name or attribute."""
 
+    matches = []
     for node in ast.walk(tree):
         if not isinstance(node, ast.Assign) or len(node.targets) != 1:
             continue
         target = node.targets[0]
         if isinstance(target, ast.Name) and target.id == target_name:
-            return node.value
-        if isinstance(target, ast.Attribute) and target.attr == target_name:
-            return node.value
+            matches.append(node.value)
+        elif isinstance(target, ast.Attribute) and target.attr == target_name:
+            matches.append(node.value)
+    if len(matches) > 1:
+        raise ValueError(f"multiple assignments found for {target_name!r}")
+    if matches:
+        return matches[0]
     raise ValueError(f"could not find assignment for {target_name!r}")
 
 

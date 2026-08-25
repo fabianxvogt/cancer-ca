@@ -115,6 +115,21 @@ def test_contract_rejects_boolean_numeric_multipliers(tmp_path: Path):
         inspect_contract(candidate)
 
 
+def test_contract_rejects_duplicate_assignments(tmp_path: Path):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "division_prob = self.local_division_rate * 0.8",
+        "division_prob = self.local_division_rate * 0.8\n"
+        "            division_prob = self.local_division_rate * 0.8",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="multiple assignments found for 'division_prob'"):
+        inspect_contract(candidate)
+
+
 def test_contract_cli_reports_missing_source_without_traceback(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):
