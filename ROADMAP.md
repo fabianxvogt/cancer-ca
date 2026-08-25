@@ -11,7 +11,9 @@ Current owner review: [dual-metric, rule-ablation, and calibration disposition](
 - [ ] Calibrate `local_division_rate` semantics (probability vs rate scale) against intended
       behavior (see `docs/README.md`)
   - [x] Add seeded untreated-trajectory regression coverage before any model change
-- [x] Add a dependency-light source contract for the legacy division-gate scale.
+  - [x] Add a dependency-light source contract for the legacy division-gate scale.
+  - [x] Record the three-way semantics/compatibility matrix and owner-gated
+        bounded experiment; semantic choice remains open.
 - [x] Add a dependency-aware bounded structural smoke entry point with focused contract tests.
 - [x] Verify exact installed dependency versions against `requirements.txt` in the structural smoke.
 - [x] Verify every required smoke import has an exact distribution pin before environment checks.

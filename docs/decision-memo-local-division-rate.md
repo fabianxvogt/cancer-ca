@@ -4,6 +4,10 @@
 **Classification:** `INCREMENTAL` — documentation of an unresolved software
 semantics question; no model or scientific claim is added.
 
+This memo is a contract aid, not a recommendation. It records what the source
+does, what each plausible reading would risk preserving or changing, and the
+smallest experiment that should be run only after the owner selects a reading.
+
 ## Decision
 
 Choose one operational meaning before changing `tumor_ca.py` or interpreting
@@ -21,6 +25,26 @@ new results:
 The human decision is therefore both a semantic choice and a compatibility
 choice: preserve the legacy behavior, or recalibrate it and accept that the
 seeded trajectories and published outputs may change.
+
+## Bounded decision matrix
+
+The compatibility column treats the current source behavior and committed
+figures/results as the baseline. “High” means that adopting the meaning as a
+real probability/rate is likely to change the division mask and therefore
+downstream random draws, placements, mutations, trajectories, and dependent
+outputs. This is a risk assessment, not a selection.
+
+| Candidate semantics | Static/source fit | Compatibility risk | Contract question for the owner |
+| --- | --- | --- | --- |
+| **Bernoulli probability** | `[FORMAL]` The comparison is written as a probability-like gate, but the default derived threshold is `3.2`, outside `[0, 1]`. If `0.8 * local_division_rate` is the probability, the raw field must be at most `1.25`. | **High** if the default is rescaled into `[0, 1]`: current eligible cells always pass, while a sub-unit probability would not. An explicit saturation rule could preserve current eligibility, but then the raw field and derived probability still need separate definitions. | Is the raw field or the scaled value the probability, and is preserving the existing gate/outputs a hard constraint? |
+| **Rate/propensity** | `[FORMAL]` The field is unbounded at `4.0` and is modified multiplicatively under therapy (`* 0.9`), which is compatible with a relative rate. `[FORMAL]` No time unit, hazard, or rate-to-probability conversion is present; `0.8` is not documented as a time step. | **High/unknown** until a time unit and conversion are fixed. Any non-saturating conversion can change the current gate; different conversions can produce different trajectories even with the same seed. | What is one model step in rate units, and which explicit conversion to an event probability is authoritative? |
+| **Legacy eligibility score** | `[FORMAL]` This exactly matches the implemented rule `u < 0.8 * local_division_rate`. At the default `3.2`, every eligible tumor cell passes the gate; the field remains a score, not a probability. | **Low for output preservation** if the formula and state updates remain frozen; **high for semantic debt** because all thresholds at or above `1.25` are indistinguishable at the eligibility gate and the value has no stated physical unit. | Is preserving the current formula and committed outputs more important than assigning a probability/rate interpretation? |
+
+The source also makes the compatibility boundary stateful: therapy multiplies
+the local division field by `0.9`, while the no-therapy branch applies
+`min(1.01 * local_division_rate, 0.8)` (`tumor_ca.py:122-146`). The owner-approved
+experiment must therefore compare the chosen meaning against the current
+stateful updates, not only against the constructor default.
 
 ## Plausible meanings
 
@@ -52,22 +76,28 @@ seeded trajectories and published outputs may change.
 - `[REPORTED]` The README, docs index, and roadmap already record the scale
   mismatch as deferred calibration work and leave the model unchanged.
 
-## Smallest dependency-backed falsification experiment
+## Smallest owner-approved falsification experiment
 
-Run only after the human selects the intended probability/rate mapping. Use an
-isolated harness with the exact pins in [`requirements.txt`](../requirements.txt)
-and `MPLBACKEND=Agg`; do not edit `tumor_ca.py`.
+No run is authorized by this memo alone. Before execution, the owner must name
+one matrix row, state whether the existing seed-7 fingerprint and committed
+outputs are a preservation requirement, and approve an isolated comparison
+harness. The harness must not edit `tumor_ca.py`, regenerate figures, update
+JSON results, or change dependencies.
 
-1. Import `AdvancedTumorCA`, create the existing `size=9`, `seed=7`,
-   `radius=1`, `normal_cells=False`, untreated setup, and keep nutrients at a
-   value above `theta_div`.
-2. Sweep only `local_division_rate` values `{0.5, 1.0, 1.25, 4.0}`. For the
-   fixed initially eligible tumor cells, estimate the gate-pass fraction over
-   repeated fresh draws using the exact current expression and record the raw
-   thresholds `{0.4, 0.8, 1.0, 3.2}`.
-3. For each value, run the existing six-step setup once and record the six
-   `total_tumor` values and final-grid SHA-256. Replay seed `7`; use seed `8`
-   only for the already-established different-seed check.
+Once approved, use the exact pins in [`requirements.txt`](../requirements.txt)
+and `MPLBACKEND=Agg`:
+
+1. Evaluate the unchanged gate at only
+   `local_division_rate = {0.5, 1.0, 1.25, 4.0}`, recording the raw thresholds
+   `{0.4, 0.8, 1.0, 3.2}` and the observed pass fraction for fresh uniform
+   draws. This is the dependency-light discriminator for the unit-interval
+   and saturation claims.
+2. For those same four values, use the existing `size=9`, `seed=7`,
+   `radius=1`, `normal_cells=False`, untreated six-step setup. Record only the
+   six `total_tumor` values, final-grid SHA-256, and a same-seed replay check.
+3. Compare the observations to the owner-selected row and preservation rule.
+   Use seed `8` only if the owner wants the existing different-seed guard
+   repeated; it is not needed to discriminate the three semantics.
 
 **Falsification rule:** a probability reading is falsified if its declared
 probability does not match the measured gate fraction or leaves the unit
@@ -77,3 +107,7 @@ but `1.25` and `4.0` produce the same gate and seeded trajectory. A legacy-score
 reading is supported only by observing that saturation and reproducing the
 existing seed-7 regression; that support does not validate the model’s
 scientific interpretation.
+
+The experiment is intentionally a compatibility probe, not a calibration of a
+biological parameter. Its result must be reviewed by the owner before any
+semantic change, figure regeneration, or interpretation of new model outputs.
