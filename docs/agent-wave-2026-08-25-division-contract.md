@@ -20,19 +20,26 @@ contract pass validation while silently changing the reported gate scale. The
 validator accepts only actual integer or floating-point AST literals; this is
 input validation for the probe, not a semantic decision about the model.
 
+The CLI now rejects missing, non-file, unreadable, or syntactically invalid
+`--path` inputs with a concise `CONTRACT BLOCKED` message and exit status `2`.
+This keeps a malformed evidence-probe invocation from leaking a traceback or
+being mistaken for a contract report. The source-level API still raises a
+validation error for the same invalid input.
+
 ## Verification
 
 ```text
 python3 -m py_compile scripts/legacy_division_contract.py tests/test_legacy_semantics.py
 python3 -m pytest -q -p no:cacheprovider tests/test_legacy_semantics.py
-5 passed
+7 passed
 python3 scripts/legacy_division_contract.py
 ```
 
 The command reports the expected source contract, and the focused tests also
 reject candidate sources that clamp the gate or use a boolean multiplier. No
 model import, dependency overlay, figure generation, or generated artifact was
-used.
+used. The CLI regression checks cover missing and syntactically invalid source
+paths without executing the model.
 
 ## Limits and next test
 

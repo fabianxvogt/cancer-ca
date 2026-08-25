@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.legacy_division_contract import inspect_contract
+from scripts.legacy_division_contract import inspect_contract, main
 
 
 def test_default_division_gate_preserves_legacy_formula():
@@ -113,3 +113,30 @@ def test_contract_rejects_boolean_numeric_multipliers(tmp_path: Path):
 
     with pytest.raises(ValueError, match="division_prob must use a numeric scalar multiplier"):
         inspect_contract(candidate)
+
+
+def test_contract_cli_reports_missing_source_without_traceback(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    missing = tmp_path / "missing.py"
+
+    assert main(["--path", str(missing)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == (
+        f"CONTRACT BLOCKED: source path must be a regular file: {missing}\n"
+    )
+
+
+def test_contract_cli_reports_invalid_source_without_traceback(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid = tmp_path / "invalid.py"
+    invalid.write_text("not valid python !!!\n", encoding="utf-8")
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == "CONTRACT BLOCKED: invalid syntax (invalid.py, line 1)\n"

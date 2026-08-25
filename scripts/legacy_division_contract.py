@@ -14,6 +14,7 @@ import ast
 import json
 import math
 from pathlib import Path
+import sys
 from typing import Any, Dict
 
 
@@ -118,7 +119,13 @@ def _saturation_contract(gate_scale: float) -> Dict[str, Any]:
 def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
     """Return the current source-level legacy division contract."""
 
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    if not path.is_file():
+        raise ValueError(f"source path must be a regular file: {path}")
+    try:
+        source = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ValueError(f"could not read source path {path}: {exc}") from exc
+    tree = ast.parse(source, filename=str(path))
     rate_expression = _assignment(tree, "local_division_rate")
     gate_expression = _assignment(tree, "division_prob")
     default_rate = _right_hand_constant(rate_expression, "local_division_rate")
@@ -153,7 +160,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Any = None) -> int:
     args = build_parser().parse_args(argv)
-    print(json.dumps(inspect_contract(args.path), sort_keys=True))
+    try:
+        report = inspect_contract(args.path)
+    except (SyntaxError, ValueError) as exc:
+        print(f"CONTRACT BLOCKED: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(report, sort_keys=True))
     return 0
 
 

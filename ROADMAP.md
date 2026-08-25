@@ -27,6 +27,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       the committed image inventory.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
+- [x] Keep invalid legacy-contract CLI paths explicit and non-tracebacking;
+      this validates the evidence probe only and does not alter model semantics.
 
 ## Next
 
