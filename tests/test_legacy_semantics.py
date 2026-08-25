@@ -617,7 +617,45 @@ def test_contract_cli_reports_invalid_source_without_traceback(
 
     captured = capsys.readouterr()
     assert captured.out == ""
-    assert captured.err == "CONTRACT BLOCKED: invalid syntax (invalid.py, line 1)\n"
+    assert captured.err == f"CONTRACT BLOCKED: invalid syntax ({invalid}, line 1)\n"
+
+
+def test_contract_parser_reports_exact_path_and_line(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid = tmp_path / "nested" / "invalid.py"
+    invalid.parent.mkdir()
+    invalid.write_text("class Broken:\n    value =\n", encoding="utf-8")
+
+    message = f"invalid syntax ({invalid}, line 2)"
+    with pytest.raises(ValueError) as excinfo:
+        inspect_contract(invalid)
+    assert str(excinfo.value) == message
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
+
+
+def test_contract_parser_reports_embedded_null_location(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid = tmp_path / "nested" / "nul.py"
+    invalid.parent.mkdir()
+    invalid.write_bytes(b"class Broken:\n    value = 1\n    \x00\n")
+
+    message = f"source code string cannot contain null bytes ({invalid}, line 3, column 5)"
+    with pytest.raises(ValueError) as excinfo:
+        inspect_contract(invalid)
+    assert str(excinfo.value) == message
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
 
 
 def test_contract_cli_escapes_control_characters_in_missing_path(
@@ -645,8 +683,8 @@ def test_contract_cli_escapes_control_characters_in_syntax_path(
     assert main(["--path", str(invalid)]) == 2
 
     captured = capsys.readouterr()
-    safe_path = repr(invalid.name)[1:-1]
     assert captured.out == ""
+    safe_path = repr(str(invalid))[1:-1]
     assert captured.err == f"CONTRACT BLOCKED: invalid syntax ({safe_path}, line 1)\n"
     assert captured.err.count("\n") == 1
 

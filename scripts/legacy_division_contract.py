@@ -70,6 +70,33 @@ def _safe_path_text(path: Path) -> str:
     return text if text.isprintable() else repr(text)[1:-1]
 
 
+def _parse_source(source: str, path_text: str) -> ast.AST:
+    """Parse source with an exact, line-oriented diagnostic boundary."""
+
+    try:
+        return ast.parse(source, filename=path_text)
+    except SyntaxError as exc:
+        message = exc.msg or "invalid syntax"
+        if exc.lineno is None:
+            detail = f"{message} ({path_text})"
+        else:
+            detail = f"{message} ({path_text}, line {exc.lineno})"
+        raise ValueError(detail) from exc
+    except ValueError as exc:
+        message = str(exc)
+        if message == "source code string cannot contain null bytes":
+            null_offset = source.find("\x00")
+            line = source.count("\n", 0, null_offset) + 1
+            line_start = source.rfind("\n", 0, null_offset) + 1
+            column = null_offset - line_start + 1
+            message = (
+                f"{message} ({path_text}, line {line}, column {column})"
+            )
+        else:
+            message = f"{message} ({path_text})"
+        raise ValueError(message) from exc
+
+
 def _scoped_method(tree: ast.AST, class_name: str, method_name: str) -> ast.AST:
     """Return one top-level class method used by the source contract."""
 
@@ -321,7 +348,7 @@ def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
         ) from exc
     except OSError as exc:
         raise ValueError(f"could not read source path {path_text}: {exc}") from exc
-    tree = ast.parse(source, filename=path_text)
+    tree = _parse_source(source, path_text)
     rate_expression = _assignment(tree, "local_division_rate")
     gate_expression = _assignment(tree, "division_prob")
     default_rate = _right_hand_constant(rate_expression, "local_division_rate")

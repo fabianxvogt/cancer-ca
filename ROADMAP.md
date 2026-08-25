@@ -47,6 +47,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       contract results instead of leaking float-conversion tracebacks.
 - [x] Escape non-printable legacy-contract source paths in API/CLI errors so
       blocked messages remain deterministic and line-safe.
+- [x] Preserve exact source filenames and parser locations in API/CLI errors;
+      normalize syntax and embedded-NUL parser failures to the established
+      `ValueError`/status-2 contract.
 - [x] Reject loop-target rebindings of legacy-contract values instead of
       silently accepting a later shadowing source assignment.
 - [x] Reject named-expression rebindings of legacy-contract values instead of
@@ -108,6 +111,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       established API `ValueError` and CLI status-2 boundary.
 - [x] 2026-08-25: escaped non-printable legacy-contract source paths in blocked
       API/CLI errors so parser and file errors remain line-safe.
+- [x] 2026-08-25: preserved exact source paths and parser locations for syntax
+      and embedded-NUL failures, keeping the API/CLI error boundary explicit.
 - [x] 2026-08-25: rejected loop-target rebindings of legacy-contract values so
       exact source reports cannot ignore a later shadowing binding.
 - [x] 2026-08-25: rejected named-expression rebindings of legacy-contract values

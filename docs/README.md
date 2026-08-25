@@ -139,6 +139,13 @@ deterministic. Printable paths retain their existing display. This is a
 reporting-only guard; evidence is recorded in
 [`agent-wave-2026-08-25-legacy-path-error-boundary.md`](agent-wave-2026-08-25-legacy-path-error-boundary.md).
 
+Parser diagnostics also retain the exact escaped source path instead of Python's
+basename-only `SyntaxError` rendering, and normalize syntax/NUL parser failures
+to the API's `ValueError` boundary. Line numbers are preserved and embedded NULs
+include a column. This keeps same-basename fixtures distinguishable without
+importing or executing the model. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-parser-diagnostics.md`](agent-wave-2026-08-25-legacy-parser-diagnostics.md).
+
 The probe also treats `for` targets that rebind either reported contract value
 as blocked source input. Without this check, a later loop target could shadow a
 previously recognized plain assignment while the report still claimed the
