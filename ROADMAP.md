@@ -45,6 +45,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       saturation boundary overflow to non-finite report values.
 - [x] Convert oversized integer multiplier literals into explicit blocked
       contract results instead of leaking float-conversion tracebacks.
+- [x] Escape non-printable legacy-contract source paths in API/CLI errors so
+      blocked messages remain deterministic and line-safe.
 
 ## Next
 
@@ -91,3 +93,5 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       constants cannot leak `Infinity` into the JSON evidence report.
 - [x] 2026-08-25: converted oversized integer multiplier literals into the
       established API `ValueError` and CLI status-2 boundary.
+- [x] 2026-08-25: escaped non-printable legacy-contract source paths in blocked
+      API/CLI errors so parser and file errors remain line-safe.

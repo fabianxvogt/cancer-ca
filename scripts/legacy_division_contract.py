@@ -63,6 +63,13 @@ _CONTRACT_ASSIGNMENTS = {
 }
 
 
+def _safe_path_text(path: Path) -> str:
+    """Keep control characters in path errors from creating extra output lines."""
+
+    text = str(path)
+    return text if text.isprintable() else repr(text)[1:-1]
+
+
 def _scoped_method(tree: ast.AST, class_name: str, method_name: str) -> ast.AST:
     """Return one top-level class method used by the source contract."""
 
@@ -253,15 +260,18 @@ def _saturation_contract(gate_scale: float) -> Dict[str, Any]:
 def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
     """Return the current source-level legacy division contract."""
 
+    path_text = _safe_path_text(path)
     if not path.is_file():
-        raise ValueError(f"source path must be a regular file: {path}")
+        raise ValueError(f"source path must be a regular file: {path_text}")
     try:
         source = path.read_text(encoding="utf-8")
     except UnicodeError as exc:
-        raise ValueError(f"could not decode source path {path} as UTF-8: {exc}") from exc
+        raise ValueError(
+            f"could not decode source path {path_text} as UTF-8: {exc}"
+        ) from exc
     except OSError as exc:
-        raise ValueError(f"could not read source path {path}: {exc}") from exc
-    tree = ast.parse(source, filename=str(path))
+        raise ValueError(f"could not read source path {path_text}: {exc}") from exc
+    tree = ast.parse(source, filename=path_text)
     rate_expression = _assignment(tree, "local_division_rate")
     gate_expression = _assignment(tree, "division_prob")
     default_rate = _right_hand_constant(rate_expression, "local_division_rate")

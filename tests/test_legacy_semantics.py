@@ -348,6 +348,37 @@ def test_contract_cli_reports_invalid_source_without_traceback(
     assert captured.err == "CONTRACT BLOCKED: invalid syntax (invalid.py, line 1)\n"
 
 
+def test_contract_cli_escapes_control_characters_in_missing_path(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    missing = tmp_path / "missing\ncontract.py"
+
+    assert main(["--path", str(missing)]) == 2
+
+    captured = capsys.readouterr()
+    safe_path = repr(str(missing))[1:-1]
+    assert captured.out == ""
+    assert captured.err == (
+        f"CONTRACT BLOCKED: source path must be a regular file: {safe_path}\n"
+    )
+    assert captured.err.count("\n") == 1
+
+
+def test_contract_cli_escapes_control_characters_in_syntax_path(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid = tmp_path / "invalid\ncontract.py"
+    invalid.write_text("not valid python !!!\n", encoding="utf-8")
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    safe_path = repr(invalid.name)[1:-1]
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: invalid syntax ({safe_path}, line 1)\n"
+    assert captured.err.count("\n") == 1
+
+
 def test_contract_cli_reports_non_utf8_source_without_traceback(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):

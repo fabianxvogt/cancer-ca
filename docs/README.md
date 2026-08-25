@@ -132,3 +132,9 @@ when Python cannot convert the AST value to a float. The API raises `ValueError`
 and the CLI returns status `2` without a traceback or partial JSON report; this
 boundary is documented in
 [`agent-wave-2026-08-25-legacy-integer-overflow.md`](agent-wave-2026-08-25-legacy-integer-overflow.md).
+
+Non-printable characters in a source path are escaped in blocked-contract error
+messages, including parser errors, so line-oriented stderr remains one-line and
+deterministic. Printable paths retain their existing display. This is a
+reporting-only guard; evidence is recorded in
+[`agent-wave-2026-08-25-legacy-path-error-boundary.md`](agent-wave-2026-08-25-legacy-path-error-boundary.md).
