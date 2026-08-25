@@ -90,7 +90,7 @@ If generalizable, this suggests that response-only optimization may be insuffici
     \item No pharmacokinetics or toxicity constraints
 \end{itemize}
 
-These simplifications limit biological realism but enable transparent analysis of the core evolutionary dynamics. All parameters, assumptions, and implementation details are documented for reproducibility (see Supplementary Table S1 for complete parameter set).
+These simplifications limit biological realism but enable transparent analysis of the core evolutionary dynamics. All parameters, assumptions, and implementation details are documented for reproducibility (see the parameter summary in the Code and Data Availability section).
 
 \subsection{Meta-Cellular Automaton Architecture}
 
@@ -127,7 +127,7 @@ where $N(x,y)$ is nutrient concentration, $T(x,y)$ is therapy concentration, $\r
     \item Diffuse nutrients via 2D convolution with Gaussian kernel
 \end{enumerate}
 
-Parameters: $\theta_{\text{starve}} = 0.8$, $\theta_{\text{nutr}} = 0.05$, $c_{\text{cons}} = 0.005$, $r_{\text{regen}} = 0.05$, $\lambda_0 = 4.0$, $\delta_0 = 0.01$ for sensitive cells, $\delta_0 = 0.0005$ for resistant cells. See Supplementary Table S1 for complete parameter set with biological justifications.
+Parameters: $\theta_{\text{starve}} = 0.8$, $\theta_{\text{nutr}} = 0.05$, $c_{\text{cons}} = 0.005$, $r_{\text{regen}} = 0.05$, $\lambda_0 = 4.0$, $\delta_0 = 0.01$ for sensitive cells, $\delta_0 = 0.0005$ for resistant cells. See the parameter summary in the Code and Data Availability section for the current draft's key values.
 
 \subsection{Therapy as Meta-Rule Operator}
 
@@ -690,11 +690,11 @@ This is not a methodological flaw---it reveals a genuine tradeoff between compet
 \section*{Code and Data Availability}
 
 All code, simulation data, and analysis scripts are available at: \\
-\texttt{https://github.com/[username]/cancer-ca}
+\texttt{https://github.com/fabianxvogt/cancer-ca}
 
 Simulations implemented in Python 3.12 using NumPy, SciPy, Matplotlib. Cellular automaton engine: 668 lines (tumor\_ca.py). Stability metrics: 383 lines (stability\_metrics.py). Full reproducibility instructions in repository README.
 
-\textbf{Complete parameter specification:} Supplementary Table S1 (to be added) contains all model parameters with values, units, biological justifications, and literature sources. Key parameters: grid size (120$\times$120), initial tumor radius (20 cells), division rate $\lambda_0 = 4.0$, sensitive death rate $\delta_0 = 0.01$, resistant death rate $0.0005$, mutation rate $\mu_0 = 0.002$, therapy-induced mutagenesis $\alpha = 3.0$, nutrient consumption $0.005$, regeneration $0.05$. All simulations use same random seed structure for reproducibility.
+\textbf{Parameter specification status:} The current draft records the key parameter values below; a separate Supplementary Table S1 is not currently committed. Key parameters: grid size (120$\times$120), initial tumor radius (20 cells), division rate $\lambda_0 = 4.0$, sensitive death rate $\delta_0 = 0.01$, resistant death rate $0.0005$, mutation rate $\mu_0 = 0.002$, therapy-induced mutagenesis $\alpha = 3.0$, nutrient consumption $0.005$, regeneration $0.05$. All simulations use same random seed structure for reproducibility.
 
 \section*{Acknowledgments}
 

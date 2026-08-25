@@ -6,12 +6,19 @@ The project README and any document marked `human-owned` remain authoritative. D
 
 Never store credentials, private data, generated output, logs, datasets, or build artifacts here. Preserve unrelated local work and keep each change focused.
 
-## Current owner review
+## Decision and review map
 
-The latest roadmap disposition for the dual-metric figure, rule ablation, and
-`local_division_rate` calibration is recorded in
+The latest owner disposition for all three open lanes is recorded in
 [`roadmap-review-2026-08-25.md`](roadmap-review-2026-08-25.md). It is a documentation
 and evidence-boundary note; it does not close a scientific roadmap item.
+
+- **Dual metric:** the [sign-flip probe](agent-wave-2026-08-25-dual-metric.md) is an
+  incomplete runtime attempt, while the [dependency preflight](agent-wave-2026-08-25-dual-metric-preflight.md)
+  is metadata-only.
+- **Rule ablation:** there is no separate decision memo; section 2 of the consolidated
+  roadmap review is the current disposition, and no ablation contract is approved.
+- **Calibration:** the [`local_division_rate` decision memo](decision-memo-local-division-rate.md)
+  keeps all three semantic readings open pending owner choice.
 
 ## Deferred calibration finding
 
@@ -60,9 +67,9 @@ It compares probability, rate/propensity, and legacy eligibility-score
 interpretations and specifies the smallest pinned-environment experiment after
 human approval. It does not change the model or claim biological validity.
 
-The same preflight parses the existing dual-metric supplementary figure script,
+The same preflight parses the existing exploratory dual-metric source,
 `figure_S1_metric_dependence.py`, and checks its direct imports against the same
-exact pins. This does not execute the figure or verify its numerical results. Its
+exact pins. This does not execute the source or verify its numerical results. Its
 evidence is recorded in
 [`agent-wave-2026-08-25-dual-metric-preflight.md`](agent-wave-2026-08-25-dual-metric-preflight.md).
 

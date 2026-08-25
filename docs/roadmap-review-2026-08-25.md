@@ -163,9 +163,10 @@ calibration experiment; it still does not establish clinical validity.
   than the README and paper’s later model-contingency caveats. This review does not
   rewrite those claims; the owner should decide which document is authoritative before
   publication work resumes.
-- `images/README.md` says all six figures are ready, while the supplementary dual-
-  metric source has no committed image. This is a documentation/inventory mismatch,
-  not evidence that a figure should be generated now.
+- `images/README.md` previously overstated publication readiness and used stale
+  path/result language. Its inventory metadata is corrected in this pass; the
+  exploratory dual-metric source still has no committed image, and no figure is
+  generated or promoted by that correction.
 
 ## Owner decisions requested
 
