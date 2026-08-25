@@ -123,6 +123,8 @@ def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
         raise ValueError(f"source path must be a regular file: {path}")
     try:
         source = path.read_text(encoding="utf-8")
+    except UnicodeError as exc:
+        raise ValueError(f"could not decode source path {path} as UTF-8: {exc}") from exc
     except OSError as exc:
         raise ValueError(f"could not read source path {path}: {exc}") from exc
     tree = ast.parse(source, filename=str(path))

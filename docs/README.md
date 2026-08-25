@@ -96,3 +96,9 @@ table (`0.5`, `1.0`, `1.25`, `4.0`), identifies the saturation boundary, and
 repeats the exact owner decision boundary while leaving the semantic choice
 unset. The focused tests guard this source contract. It is a pre-change evidence
 probe, not a probability calibration or scientific validation.
+
+The probe also treats non-UTF-8 source bytes as blocked input: the API raises
+`ValueError` and the CLI returns status `2` with no report on stdout. This is a
+parsing and reproducibility guard only; it does not normalize source files or
+execute the model. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-encoding-boundary.md`](agent-wave-2026-08-25-legacy-encoding-boundary.md).

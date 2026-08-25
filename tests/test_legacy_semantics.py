@@ -140,3 +140,21 @@ def test_contract_cli_reports_invalid_source_without_traceback(
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == "CONTRACT BLOCKED: invalid syntax (invalid.py, line 1)\n"
+
+
+def test_contract_cli_reports_non_utf8_source_without_traceback(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid_encoding = tmp_path / "invalid-encoding.py"
+    invalid_encoding.write_bytes(b"# invalid utf-8: \xff\n")
+
+    with pytest.raises(ValueError, match="could not decode source path .* as UTF-8"):
+        inspect_contract(invalid_encoding)
+
+    assert main(["--path", str(invalid_encoding)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err.startswith(
+        f"CONTRACT BLOCKED: could not decode source path {invalid_encoding} as UTF-8: "
+    )

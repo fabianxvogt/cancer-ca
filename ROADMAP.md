@@ -29,6 +29,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] Pin the verified research dependency set in `requirements.txt`.
 - [x] Keep invalid legacy-contract CLI paths explicit and non-tracebacking;
       this validates the evidence probe only and does not alter model semantics.
+- [x] Keep non-UTF-8 legacy-contract source inputs explicit and non-tracebacking;
+      this hardens parsing boundaries only and does not alter model semantics.
 
 ## Next
 
@@ -65,3 +67,5 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       manuscript image inclusions and added a dependency-free asset contract.
 - [x] 2026-08-25: reconciled the publication checkbox with the root portfolio
       record and verified the public remote/push-clean state.
+- [x] 2026-08-25: made non-UTF-8 legacy-contract inputs return an explicit
+      blocked result instead of leaking a decoding traceback.
