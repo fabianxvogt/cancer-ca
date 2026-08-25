@@ -50,14 +50,19 @@ REQUIRED_IMPORTS = {
     "matplotlib": "matplotlib",
     "sklearn": "scikit-learn",
     "pandas": "pandas",
+    "seaborn": "seaborn",
 }
 REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
 CORE_EXPERIMENT_PATH = Path(__file__).resolve().parents[1] / "core_experiment.py"
 DUAL_METRIC_FIGURE_PATH = Path(__file__).resolve().parents[1] / "figure_S1_metric_dependence.py"
 PROJECT_MODULES = frozenset({"tumor_ca", "stability_metrics"})
+FIGURE_SOURCE_PIN_CONTRACTS = {
+    path.name: path
+    for path in sorted(DUAL_METRIC_FIGURE_PATH.parent.glob("figure*.py"))
+}
 SOURCE_PIN_CONTRACTS = {
     "core_experiment.py": CORE_EXPERIMENT_PATH,
-    "figure_S1_metric_dependence.py": DUAL_METRIC_FIGURE_PATH,
+    **FIGURE_SOURCE_PIN_CONTRACTS,
 }
 
 

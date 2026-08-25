@@ -110,14 +110,12 @@ the paper's metrics, correlations, or biological conclusions. If a dependency is
 missing or its version drifts, the command exits without importing the research
 runner and points to the pinned `requirements.txt` environment.
 
-Before that environment check, the smoke also parses `core_experiment.py` to ensure
-its direct third-party imports have distribution mappings and exact pins. This is a
-source/metadata contract only; it does not import packages, run trajectories, or
-establish scientific comparability.
-
-The same source/metadata preflight covers the existing dual-metric supplementary
-figure script, `figure_S1_metric_dependence.py`, before any environment or model
-execution. It does not reproduce the figure or verify its numerical claims.
+Before that environment check, the smoke also parses `core_experiment.py` and every
+committed `figure*.py` script to ensure their direct third-party imports have
+distribution mappings and exact pins. This is a source/metadata contract only; it
+does not import packages, run trajectories, generate figures, or establish
+scientific comparability. The figure-script coverage includes the supplementary
+`figure_S1_metric_dependence.py` preflight.
 
 The division-contract command reads `tumor_ca.py` as source and reports the
 legacy raw multiplier, gate scale, and derived threshold before any calibration

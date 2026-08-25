@@ -39,11 +39,13 @@ in `requirements.txt`; it does not import dependencies, run the model, or imply
 that results are scientifically comparable. Its evidence is recorded in
 [`agent-wave-2026-08-25-pin-coverage.md`](agent-wave-2026-08-25-pin-coverage.md).
 
-It also parses the direct third-party imports in `core_experiment.py` and checks
-that each has a mapped exact pin. This source/metadata contract does not import
-packages, execute a trajectory, or establish scientific comparability. Its
-evidence is recorded in
-[`agent-wave-2026-08-25-source-pin-coverage.md`](agent-wave-2026-08-25-source-pin-coverage.md).
+It also parses the direct third-party imports in `core_experiment.py` and every
+committed `figure*.py` script, checking that each has a mapped exact pin. This
+source/metadata contract does not import packages, execute a trajectory, generate
+figures, or establish scientific comparability. Its figure coverage includes the
+supplementary metric-dependence script. Evidence is recorded in
+[`agent-wave-2026-08-25-source-pin-coverage.md`](agent-wave-2026-08-25-source-pin-coverage.md)
+and [`agent-wave-2026-08-25-figure-pin-coverage.md`](agent-wave-2026-08-25-figure-pin-coverage.md).
 
 The unresolved semantic choice is captured in the
 [`local_division_rate` decision memo](decision-memo-local-division-rate.md).

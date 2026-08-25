@@ -8,6 +8,8 @@ from scripts.smoke_core_experiment import (
     DUAL_METRIC_FIGURE_PATH,
     EXPECTED_HISTORY_KEYS,
     EXPECTED_STRATEGIES,
+    FIGURE_SOURCE_PIN_CONTRACTS,
+    REQUIRED_IMPORTS,
     THERAPY_START,
     dependency_version_mismatches,
     direct_imported_modules,
@@ -106,7 +108,7 @@ def test_required_dependency_pin_gaps_reports_missing_distribution_pins():
         }
     )
 
-    assert gaps == ("matplotlib", "pandas", "scipy")
+    assert gaps == ("matplotlib", "pandas", "scipy", "seaborn")
 
 
 def test_direct_import_contract_excludes_project_modules_and_finds_runner_deps():
@@ -121,6 +123,17 @@ def test_dual_metric_figure_import_contract_is_pinned():
         "scipy",
     )
     assert source_dependency_pin_gaps(DUAL_METRIC_FIGURE_PATH) == ()
+
+
+def test_all_committed_figure_scripts_have_pinned_direct_imports():
+    assert set(FIGURE_SOURCE_PIN_CONTRACTS) == {
+        path.name for path in DUAL_METRIC_FIGURE_PATH.parent.glob("figure*.py")
+    }
+    assert REQUIRED_IMPORTS["seaborn"] == "seaborn"
+    assert all(
+        source_dependency_pin_gaps(path) == ()
+        for path in FIGURE_SOURCE_PIN_CONTRACTS.values()
+    )
 
 
 def test_source_dependency_pin_gaps_reports_an_unpinned_direct_import():
