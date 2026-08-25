@@ -369,6 +369,61 @@ def test_contract_rejects_named_expression_rebinding_of_reported_value(
     assert captured.err == f"CONTRACT BLOCKED: {message}\n"
 
 
+def test_contract_ignores_attribute_references_inside_subscript_targets(
+    tmp_path: Path,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            lookup[self.division_prob] = 0\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    contract = inspect_contract(candidate)
+
+    assert contract["gate_scale"] == 0.8
+
+
+def test_contract_cli_accepts_attribute_references_inside_subscript_targets(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            lookup[self.division_prob] = 0\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    assert main(["--path", str(candidate)]) == 0
+
+    captured = capsys.readouterr()
+    assert captured.err == ""
+    assert json.loads(captured.out)["gate_scale"] == 0.8
+
+
+def test_contract_rejects_nested_tuple_rebinding_of_reported_value(
+    tmp_path: Path,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            (division_prob, other) = (0, 1)\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="multiple assignments found for 'division_prob'"):
+        inspect_contract(candidate)
+
+
 def test_contract_cli_reports_missing_source_without_traceback(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):

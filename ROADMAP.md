@@ -51,6 +51,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       silently accepting a later shadowing source assignment.
 - [x] Reject named-expression rebindings of legacy-contract values instead of
       silently accepting a later `:=` shadowing source assignment.
+- [x] Distinguish binding positions from nested target expressions so attribute
+      references inside subscript targets do not create false duplicate matches;
+      tuple/list/starred rebindings remain blocked.
 
 ## Next
 
@@ -103,3 +106,6 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       exact source reports cannot ignore a later shadowing binding.
 - [x] 2026-08-25: rejected named-expression rebindings of legacy-contract values
       so exact source reports cannot ignore a later `:=` shadowing binding.
+- [x] 2026-08-25: limited legacy-contract target inspection to actual binding
+      positions, avoiding false rejection of attribute references inside
+      subscript targets while preserving nested unpacking checks.

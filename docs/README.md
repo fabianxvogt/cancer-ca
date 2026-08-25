@@ -152,3 +152,12 @@ the reported local gate while the probe still accepted the earlier plain
 assignment. The guard is source-level only and does not import or execute the
 model. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-named-expression.md`](agent-wave-2026-08-25-legacy-named-expression.md).
+
+Assignment-target inspection only treats actual binding positions as bindings.
+For example, `lookup[self.division_prob] = 0` uses the attribute as a subscript
+expression, not as the assignment target, so it must not be mistaken for a
+second contract assignment. Tuple/list/starred binding targets remain
+recursive, while subscript values and slices are ignored. This is a
+source-only AST boundary; it does not import or execute the model. Evidence is
+recorded in
+[`agent-wave-2026-08-25-legacy-target-reference.md`](agent-wave-2026-08-25-legacy-target-reference.md).

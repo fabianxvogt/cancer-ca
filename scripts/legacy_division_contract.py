@@ -124,13 +124,20 @@ def _assignment_targets(node: ast.AST):
 
 
 def _mentions_target(target: ast.AST, target_name: str) -> bool:
-    """Check whether a target contains the contract name in any assignment shape."""
+    """Check binding positions without treating target expressions as bindings."""
 
-    return any(
-        (isinstance(node, ast.Name) and node.id == target_name)
-        or (isinstance(node, ast.Attribute) and node.attr == target_name)
-        for node in ast.walk(target)
-    )
+    if isinstance(target, ast.Name):
+        return target.id == target_name
+    if isinstance(target, ast.Attribute):
+        return target.attr == target_name
+    if isinstance(target, (ast.List, ast.Tuple)):
+        return any(
+            _mentions_target(element, target_name)
+            for element in target.elts
+        )
+    if isinstance(target, ast.Starred):
+        return _mentions_target(target.value, target_name)
+    return False
 
 
 def _is_expected_target(
