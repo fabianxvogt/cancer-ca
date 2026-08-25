@@ -90,7 +90,9 @@ included. This is a metadata-only asset check; its evidence is recorded in
 ## Calibration contract probe
 
 Run `python3 scripts/legacy_division_contract.py` to inspect the legacy division
-gate without importing dependencies or executing the model. The focused test
-keeps the raw default multiplier, gate scale, and derived threshold explicit;
-it is a pre-change guardrail for calibration, not a probability calibration or
-scientific validation.
+gate without importing dependencies or executing the model. The JSON report keeps
+the raw default multiplier and gate scale explicit, expands the memo's four-rate
+table (`0.5`, `1.0`, `1.25`, `4.0`), identifies the saturation boundary, and
+repeats the exact owner decision boundary while leaving the semantic choice
+unset. The focused tests guard this source contract. It is a pre-change evidence
+probe, not a probability calibration or scientific validation.

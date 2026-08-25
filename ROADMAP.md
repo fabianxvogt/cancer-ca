@@ -12,6 +12,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       behavior (see `docs/README.md`)
   - [x] Add seeded untreated-trajectory regression coverage before any model change
   - [x] Add a dependency-light source contract for the legacy division-gate scale.
+  - [x] Expand the contract probe to report the memo's four thresholds, saturation,
+        and unset owner decision boundary without model execution.
   - [x] Record the three-way semantics/compatibility matrix and owner-gated
         bounded experiment; semantic choice remains open.
 - [x] Add a dependency-aware bounded structural smoke entry point with focused contract tests.

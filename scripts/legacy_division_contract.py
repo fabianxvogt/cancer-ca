@@ -18,6 +18,33 @@ from typing import Any, Dict
 
 
 SOURCE_PATH = Path(__file__).resolve().parents[1] / "tumor_ca.py"
+CALIBRATION_RAW_RATES = (0.5, 1.0, 1.25, 4.0)
+
+OWNER_DECISION_BOUNDARY = {
+    "semantic_choice": (
+        "Choose one operational meaning before changing `tumor_ca.py` or "
+        "interpreting new results."
+    ),
+    "semantic_options": [
+        "Bernoulli probability",
+        "Rate/propensity",
+        "Legacy eligibility score",
+    ],
+    "selected_semantics": None,
+    "compatibility_choice": (
+        "The human decision is therefore both a semantic choice and a "
+        "compatibility choice: preserve the legacy behavior, or recalibrate "
+        "it and accept that the seeded trajectories and published outputs may "
+        "change."
+    ),
+    "experiment_authorization": (
+        "No run is authorized by this memo alone. Before execution, the owner "
+        "must name one matrix row, state whether the existing seed-7 fingerprint "
+        "and committed outputs are a preservation requirement, and approve an "
+        "isolated comparison harness. The harness must not edit `tumor_ca.py`, "
+        "regenerate figures, update JSON results, or change dependencies."
+    ),
+}
 
 
 def _assignment(tree: ast.AST, target_name: str) -> ast.AST:
@@ -48,6 +75,46 @@ def _right_hand_constant(expression: ast.AST, label: str) -> float:
     return result
 
 
+def _calibration_rows(gate_scale: float) -> list[Dict[str, Any]]:
+    """Return the memo's raw-rate threshold table without drawing randomness."""
+
+    rows = []
+    for raw_rate in CALIBRATION_RAW_RATES:
+        threshold = raw_rate * gate_scale
+        rows.append(
+            {
+                "raw_rate": raw_rate,
+                "gate_threshold": threshold,
+                "threshold_in_unit_interval": 0.0 <= threshold <= 1.0,
+                "saturates_uniform_gate": threshold >= 1.0,
+            }
+        )
+    return rows
+
+
+def _saturation_contract(gate_scale: float) -> Dict[str, Any]:
+    """Describe saturation implied by ``draw < gate_threshold`` for draws in [0, 1)."""
+
+    boundary = 1.0 / gate_scale
+    return {
+        "draw_interval": "[0, 1)",
+        "comparison": "draw < gate_threshold",
+        "threshold_boundary": 1.0,
+        "raw_rate_boundary": boundary,
+        "saturates_when": "gate_threshold >= 1.0",
+        "saturating_raw_rates": [
+            row["raw_rate"]
+            for row in _calibration_rows(gate_scale)
+            if row["saturates_uniform_gate"]
+        ],
+        "behavior": (
+            "Every eligible cell passes this gate at or above the raw-rate "
+            f"boundary {boundary:g}; rates above that boundary are "
+            "indistinguishable to this gate."
+        ),
+    }
+
+
 def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
     """Return the current source-level legacy division contract."""
 
@@ -64,6 +131,9 @@ def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
         "gate_scale": gate_scale,
         "default_threshold": threshold,
         "threshold_in_unit_interval": 0.0 <= threshold <= 1.0,
+        "calibration_thresholds": _calibration_rows(gate_scale),
+        "saturation": _saturation_contract(gate_scale),
+        "owner_decision_boundary": OWNER_DECISION_BOUNDARY,
         "scope": "source-level legacy semantics contract; no model execution",
     }
 
