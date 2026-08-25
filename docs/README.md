@@ -145,3 +145,10 @@ previously recognized plain assignment while the report still claimed the
 original formula. This remains an exact source-contract guard; it does not
 import or execute the model. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-loop-rebind.md`](agent-wave-2026-08-25-legacy-loop-rebind.md).
+
+Named-expression targets (`:=`) in the declared method scope are also treated
+as bindings. Without this check, a later `division_prob := ...` could overwrite
+the reported local gate while the probe still accepted the earlier plain
+assignment. The guard is source-level only and does not import or execute the
+model. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-named-expression.md`](agent-wave-2026-08-25-legacy-named-expression.md).

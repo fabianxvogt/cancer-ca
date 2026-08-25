@@ -110,13 +110,15 @@ def _scoped_nodes(method: ast.AST):
 
 
 def _assignment_targets(node: ast.AST):
-    """Return assignment targets for forms that could shadow a contract value."""
+    """Return binding targets that could shadow a contract value."""
 
     if isinstance(node, ast.Assign):
         return node.targets
     if isinstance(node, (ast.AnnAssign, ast.AugAssign)):
         return [node.target]
     if isinstance(node, ast.For):
+        return [node.target]
+    if isinstance(node, ast.NamedExpr):
         return [node.target]
     return []
 
