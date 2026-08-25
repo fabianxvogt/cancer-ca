@@ -41,6 +41,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       repeated reports remain deterministic if a caller mutates one result.
 - [x] Reject a zero legacy gate multiplier before saturation-boundary division;
       invalid source contracts remain explicit API errors and CLI blocks.
+- [x] Reject finite constants whose derived legacy-contract thresholds or
+      saturation boundary overflow to non-finite report values.
 
 ## Next
 
@@ -83,3 +85,5 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       contract reports; this hardens reproducibility without changing semantics.
 - [x] 2026-08-25: rejected zero legacy gate multipliers before computing the
       saturation boundary, preventing an uncaught division-by-zero traceback.
+- [x] 2026-08-25: rejected non-finite derived contract values so finite source
+      constants cannot leak `Infinity` into the JSON evidence report.

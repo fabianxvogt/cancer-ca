@@ -164,6 +164,81 @@ def test_contract_rejects_zero_gate_multiplier_before_saturation_division(
     )
 
 
+@pytest.mark.parametrize(
+    ("replacement", "message"),
+    [
+        (
+            "division_prob = self.local_division_rate * -0.8",
+            "division_prob must use a numeric scalar multiplier",
+        ),
+        (
+            "division_prob = self.local_division_rate * 1e309",
+            "division_prob multiplier must be finite",
+        ),
+    ],
+)
+def test_contract_rejects_negative_or_nonfinite_gate_constants(
+    tmp_path: Path, replacement: str, message: str
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "division_prob = self.local_division_rate * 0.8",
+        replacement,
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match=message):
+        inspect_contract(candidate)
+
+
+@pytest.mark.parametrize(
+    ("rate_replacement", "gate_replacement", "message"),
+    [
+        (
+            "self.local_division_rate = np.ones((size, size)) * 4.0",
+            "division_prob = self.local_division_rate * 5e-324",
+            "saturation raw-rate boundary must be finite",
+        ),
+        (
+            "self.local_division_rate = np.ones((size, size)) * 0.5",
+            "division_prob = self.local_division_rate * 1e308",
+            "calibration gate threshold must be finite",
+        ),
+    ],
+)
+def test_contract_rejects_nonfinite_derived_report_values(
+    tmp_path: Path,
+    rate_replacement: str,
+    gate_replacement: str,
+    message: str,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "self.local_division_rate = np.ones((size, size)) * 4.0",
+        rate_replacement,
+        1,
+    )
+    source = source.replace(
+        "division_prob = self.local_division_rate * 0.8",
+        gate_replacement,
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match=message):
+        inspect_contract(candidate)
+
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+        assert main(["--path", str(candidate)]) == 2
+    assert stdout.getvalue() == ""
+    assert stderr.getvalue() == f"CONTRACT BLOCKED: {message}\n"
+
+
 def test_contract_rejects_duplicate_assignments(tmp_path: Path):
     source = Path("tumor_ca.py").read_text(encoding="utf-8")
     source = source.replace(

@@ -195,12 +195,22 @@ def _right_hand_constant(expression: ast.AST, label: str) -> float:
     return result
 
 
+def _finite_derived(value: float, label: str) -> float:
+    """Reject finite source constants whose derived report value overflows."""
+
+    if not math.isfinite(value):
+        raise ValueError(f"{label} must be finite")
+    return value
+
+
 def _calibration_rows(gate_scale: float) -> list[Dict[str, Any]]:
     """Return the memo's raw-rate threshold table without drawing randomness."""
 
     rows = []
     for raw_rate in CALIBRATION_RAW_RATES:
-        threshold = raw_rate * gate_scale
+        threshold = _finite_derived(
+            raw_rate * gate_scale, "calibration gate threshold"
+        )
         rows.append(
             {
                 "raw_rate": raw_rate,
@@ -215,7 +225,9 @@ def _calibration_rows(gate_scale: float) -> list[Dict[str, Any]]:
 def _saturation_contract(gate_scale: float) -> Dict[str, Any]:
     """Describe saturation implied by ``draw < gate_threshold`` for draws in [0, 1)."""
 
-    boundary = 1.0 / gate_scale
+    boundary = _finite_derived(
+        1.0 / gate_scale, "saturation raw-rate boundary"
+    )
     return {
         "draw_interval": "[0, 1)",
         "comparison": "draw < gate_threshold",
@@ -251,7 +263,9 @@ def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
     gate_expression = _assignment(tree, "division_prob")
     default_rate = _right_hand_constant(rate_expression, "local_division_rate")
     gate_scale = _right_hand_constant(gate_expression, "division_prob")
-    threshold = default_rate * gate_scale
+    threshold = _finite_derived(
+        default_rate * gate_scale, "default division threshold"
+    )
 
     return {
         "source": str(path),

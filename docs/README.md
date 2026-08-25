@@ -121,3 +121,8 @@ The probe also rejects a zero gate multiplier before calculating the saturation
 boundary. This keeps invalid source contracts as explicit `ValueError` API
 results and status-2 `CONTRACT BLOCKED` CLI responses instead of leaking a
 division-by-zero traceback.
+
+It also rejects finite source constants whose derived default threshold,
+calibration threshold, or saturation boundary overflows to a non-finite value.
+This keeps the dependency-free JSON report finite and deterministic; evidence is
+recorded in [`agent-wave-2026-08-25-legacy-derived-finiteness.md`](agent-wave-2026-08-25-legacy-derived-finiteness.md).
