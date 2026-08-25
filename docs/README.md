@@ -161,3 +161,10 @@ recursive, while subscript values and slices are ignored. This is a
 source-only AST boundary; it does not import or execute the model. Evidence is
 recorded in
 [`agent-wave-2026-08-25-legacy-target-reference.md`](agent-wave-2026-08-25-legacy-target-reference.md).
+
+The probe also inventories other method-scope binding forms that could replace
+the exact reported value after its formula assignment: `with`/`async with`,
+`except ... as`, `async for`, import aliases, and nested function/class names.
+Comprehension and lambda parameters remain isolated to their nested scopes on
+Python 3.9 and are not treated as method-scope rebindings. Evidence is recorded
+in [`agent-wave-2026-08-25-legacy-binding-forms.md`](agent-wave-2026-08-25-legacy-binding-forms.md).

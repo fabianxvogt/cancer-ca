@@ -109,17 +109,46 @@ def _scoped_nodes(method: ast.AST):
         pending.extend(ast.iter_child_nodes(node))
 
 
-def _assignment_targets(node: ast.AST):
-    """Return binding targets that could shadow a contract value."""
+def _import_binding_name(alias: ast.alias) -> str:
+    """Return the name bound by one import alias in a local scope."""
+
+    if alias.asname:
+        return alias.asname
+    return alias.name.split(".", 1)[0]
+
+
+def _binding_targets(node: ast.AST):
+    """Return method-scope binding targets that could shadow a contract value."""
 
     if isinstance(node, ast.Assign):
         return node.targets
     if isinstance(node, (ast.AnnAssign, ast.AugAssign)):
         return [node.target]
-    if isinstance(node, ast.For):
+    if isinstance(node, (ast.For, ast.AsyncFor)):
         return [node.target]
     if isinstance(node, ast.NamedExpr):
         return [node.target]
+    if isinstance(node, (ast.With, ast.AsyncWith)):
+        return [
+            item.optional_vars
+            for item in node.items
+            if item.optional_vars is not None
+        ]
+    if isinstance(node, ast.ExceptHandler) and node.name:
+        return [ast.Name(id=node.name, ctx=ast.Store())]
+    if isinstance(node, ast.Import):
+        return [
+            ast.Name(id=_import_binding_name(alias), ctx=ast.Store())
+            for alias in node.names
+        ]
+    if isinstance(node, ast.ImportFrom):
+        return [
+            ast.Name(id=_import_binding_name(alias), ctx=ast.Store())
+            for alias in node.names
+            if alias.name != "*"
+        ]
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        return [ast.Name(id=node.name, ctx=ast.Store())]
     return []
 
 
@@ -164,7 +193,7 @@ def _assignment(tree: ast.AST, target_name: str) -> ast.AST:
     method = _scoped_method(tree, spec["class_name"], spec["method_name"])
     candidates = []
     for node in _scoped_nodes(method):
-        targets = _assignment_targets(node)
+        targets = _binding_targets(node)
         if any(_mentions_target(target, target_name) for target in targets):
             candidates.append(node)
 

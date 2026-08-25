@@ -54,6 +54,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] Distinguish binding positions from nested target expressions so attribute
       references inside subscript targets do not create false duplicate matches;
       tuple/list/starred rebindings remain blocked.
+- [x] Reject remaining method-scope binding forms (`with`/`except` aliases,
+      async loops, import aliases, and nested function/class names) instead of
+      silently accepting a later shadowing source construct.
 
 ## Next
 
@@ -109,3 +112,6 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] 2026-08-25: limited legacy-contract target inspection to actual binding
       positions, avoiding false rejection of attribute references inside
       subscript targets while preserving nested unpacking checks.
+- [x] 2026-08-25: rejected method-scope `with`/`except` aliases, async-loop
+      targets, import aliases, and nested function/class names so the source
+      contract cannot ignore later shadowing binders.

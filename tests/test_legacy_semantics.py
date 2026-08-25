@@ -369,6 +369,92 @@ def test_contract_rejects_named_expression_rebinding_of_reported_value(
     assert captured.err == f"CONTRACT BLOCKED: {message}\n"
 
 
+@pytest.mark.parametrize(
+    "insertion",
+    [
+        (
+            "            with context() as division_prob:\n"
+            "                pass\n"
+        ),
+        (
+            "            with context() as self.division_prob:\n"
+            "                pass\n"
+        ),
+        (
+            "            async with context() as division_prob:\n"
+            "                pass\n"
+        ),
+        (
+            "            try:\n"
+            "                pass\n"
+            "            except Exception as division_prob:\n"
+            "                pass\n"
+        ),
+        "            async for division_prob in source:\n                pass\n",
+        "            import package as division_prob\n",
+        "            from package import value as division_prob\n",
+        "            def division_prob():\n                pass\n",
+        "            class division_prob:\n                pass\n",
+    ],
+)
+def test_contract_rejects_method_scope_binding_forms(
+    tmp_path: Path, insertion: str
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        + insertion,
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="multiple assignments found"):
+        inspect_contract(candidate)
+
+
+def test_contract_rejects_with_alias_rebinding_of_local_rate(tmp_path: Path):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "        self.local_division_rate = np.ones((size, size)) * 4.0  # High division to balance therapy death\n",
+        "        self.local_division_rate = np.ones((size, size)) * 4.0  # High division to balance therapy death\n"
+        "        with context() as self.local_division_rate:\n"
+        "            pass\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="multiple assignments found"):
+        inspect_contract(candidate)
+
+
+def test_contract_cli_reports_except_alias_rebinding(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            try:\n"
+        "                pass\n"
+        "            except Exception as division_prob:\n"
+        "                pass\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    assert main(["--path", str(candidate)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == (
+        "CONTRACT BLOCKED: multiple assignments found for 'division_prob'\n"
+    )
+
+
 def test_contract_ignores_attribute_references_inside_subscript_targets(
     tmp_path: Path,
 ):
