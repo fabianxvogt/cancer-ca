@@ -188,6 +188,10 @@ def _right_hand_constant(expression: ast.AST, label: str) -> float:
     result = float(value.value)
     if not math.isfinite(result):
         raise ValueError(f"{label} multiplier must be finite")
+    if label == "division_prob" and result <= 0.0:
+        raise ValueError(
+            "division_prob multiplier must be positive to report saturation"
+        )
     return result
 
 

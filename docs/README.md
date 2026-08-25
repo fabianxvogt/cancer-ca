@@ -116,3 +116,8 @@ The returned owner-decision metadata is deep-copied per report. This prevents a
 caller mutating one nested report field from changing later reports for the same
 source, preserving deterministic JSON output. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-report-isolation.md`](agent-wave-2026-08-25-legacy-report-isolation.md).
+
+The probe also rejects a zero gate multiplier before calculating the saturation
+boundary. This keeps invalid source contracts as explicit `ValueError` API
+results and status-2 `CONTRACT BLOCKED` CLI responses instead of leaking a
+division-by-zero traceback.

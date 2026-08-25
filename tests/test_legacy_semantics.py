@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 from pathlib import Path
 
@@ -133,6 +135,33 @@ def test_contract_rejects_boolean_numeric_multipliers(tmp_path: Path):
 
     with pytest.raises(ValueError, match="division_prob must use a numeric scalar multiplier"):
         inspect_contract(candidate)
+
+
+def test_contract_rejects_zero_gate_multiplier_before_saturation_division(
+    tmp_path: Path,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "division_prob = self.local_division_rate * 0.8",
+        "division_prob = self.local_division_rate * 0.0",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(
+        ValueError,
+        match="division_prob multiplier must be positive to report saturation",
+    ):
+        inspect_contract(candidate)
+
+    stderr = io.StringIO()
+    with contextlib.redirect_stderr(stderr):
+        assert main(["--path", str(candidate)]) == 2
+    assert stderr.getvalue() == (
+        "CONTRACT BLOCKED: division_prob multiplier must be positive to report "
+        "saturation\n"
+    )
 
 
 def test_contract_rejects_duplicate_assignments(tmp_path: Path):
