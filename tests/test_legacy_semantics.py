@@ -1,7 +1,9 @@
+import ast
 import contextlib
 import io
 import json
 from pathlib import Path
+from typing import Optional
 
 import pytest
 
@@ -709,6 +711,75 @@ def test_contract_parser_preserves_mixed_line_endings_in_multiline_syntax(
     assert captured.out == ""
     assert captured.err == f"CONTRACT BLOCKED: {message}\n"
     assert captured.err.count("\n") == 1
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "source", "expected_line", "message_marker"),
+    [
+        (
+            "control-token",
+            "class Broken:\n    value = \x1b[31m\n",
+            2,
+            None,
+        ),
+        (
+            "control-string",
+            'value = "unterminated\x1b\n',
+            1,
+            "EOL while scanning string literal",
+        ),
+        (
+            "mismatched-delimiter",
+            "class Broken:\n    value = ([1}\n",
+            2,
+            "closing parenthesis",
+        ),
+        (
+            "malformed-f-string",
+            'value = f"{broken"\n',
+            1,
+            "f-string:",
+        ),
+        (
+            "unicode-line-separator",
+            "value = 1\u2028\n",
+            1,
+            "invalid non-printable character",
+        ),
+    ],
+)
+def test_contract_parser_keeps_unusual_source_diagnostics_line_safe(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    fixture_name: str,
+    source: str,
+    expected_line: int,
+    message_marker: Optional[str],
+):
+    invalid = tmp_path / f"{fixture_name}.py"
+    invalid.write_text(source, encoding="utf-8")
+
+    with pytest.raises(SyntaxError) as parser_error:
+        ast.parse(source, filename=str(invalid))
+    parser_exception = parser_error.value
+    parser_message = parser_exception.msg or "invalid syntax"
+    assert parser_exception.lineno == expected_line
+    if message_marker is not None:
+        assert message_marker in parser_message
+
+    message = f"{parser_message} ({invalid}, line {expected_line})"
+    with pytest.raises(ValueError) as excinfo:
+        inspect_contract(invalid)
+    assert str(excinfo.value) == message
+    assert all(character.isprintable() for character in str(excinfo.value))
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
+    assert captured.err.count("\n") == 1
+    assert all(character.isprintable() for character in captured.err[:-1])
 
 
 def test_contract_cli_escapes_control_characters_in_missing_path(

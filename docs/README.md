@@ -152,6 +152,14 @@ reproduced; the regression coverage pins the existing deterministic first-NUL,
 line-safe status-2 boundary. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-parser-line-endings.md`](agent-wave-2026-08-25-legacy-parser-line-endings.md).
 
+The parser safety follow-up also exercises raw C0 controls and Unicode line
+separators in source, an unterminated string containing an escape character,
+mismatched delimiters, and a malformed f-string. The wrapper keeps only the
+parser message and location, not `SyntaxError.text`, so API errors and CLI
+stderr remain one-line and free of source control characters. No additional
+defect was reproduced; evidence is recorded in
+[`agent-wave-2026-08-25-legacy-parser-message-safety.md`](agent-wave-2026-08-25-legacy-parser-message-safety.md).
+
 The probe also treats `for` targets that rebind either reported contract value
 as blocked source input. Without this check, a later loop target could shadow a
 previously recognized plain assignment while the report still claimed the
