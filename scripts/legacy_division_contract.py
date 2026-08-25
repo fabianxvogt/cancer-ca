@@ -67,7 +67,7 @@ def _right_hand_constant(expression: ast.AST, label: str) -> float:
     if not isinstance(expression, ast.BinOp) or not isinstance(expression.op, ast.Mult):
         raise ValueError(f"{label} must remain an explicit multiplication")
     value = expression.right
-    if not isinstance(value, ast.Constant) or not isinstance(value.value, (int, float)):
+    if not isinstance(value, ast.Constant) or type(value.value) not in (int, float):
         raise ValueError(f"{label} must use a numeric scalar multiplier")
     result = float(value.value)
     if not math.isfinite(result):

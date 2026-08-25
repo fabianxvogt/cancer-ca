@@ -14,18 +14,25 @@ biological or clinical conclusion.
 
 Classification: `INCREMENTAL` — semantics-contract infrastructure only.
 
+The probe rejects boolean literals as numeric multipliers. Python treats `bool`
+as an `int` at runtime, so accepting `True` would let a malformed source
+contract pass validation while silently changing the reported gate scale. The
+validator accepts only actual integer or floating-point AST literals; this is
+input validation for the probe, not a semantic decision about the model.
+
 ## Verification
 
 ```text
 python3 -m py_compile scripts/legacy_division_contract.py tests/test_legacy_semantics.py
 python3 -m pytest -q -p no:cacheprovider tests/test_legacy_semantics.py
-2 passed
+5 passed
 python3 scripts/legacy_division_contract.py
 ```
 
 The command reports the expected source contract, and the focused tests also
-reject a candidate source that clamps the gate. No model import, dependency
-overlay, figure generation, or generated artifact was used.
+reject candidate sources that clamp the gate or use a boolean multiplier. No
+model import, dependency overlay, figure generation, or generated artifact was
+used.
 
 ## Limits and next test
 

@@ -100,3 +100,16 @@ def test_contract_rejects_a_clamped_or_non_multiplicative_gate(tmp_path: Path):
 
     with pytest.raises(ValueError, match="division_prob must remain an explicit multiplication"):
         inspect_contract(candidate)
+
+
+def test_contract_rejects_boolean_numeric_multipliers(tmp_path: Path):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "division_prob = self.local_division_rate * 0.8",
+        "division_prob = self.local_division_rate * True",
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="division_prob must use a numeric scalar multiplier"):
+        inspect_contract(candidate)
