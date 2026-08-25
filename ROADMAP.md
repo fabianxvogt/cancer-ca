@@ -34,6 +34,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] Reject duplicate legacy-contract assignments instead of silently selecting
       the first AST match; this hardens evidence parsing only and does not alter
       model semantics.
+- [x] Require the legacy-contract assignments to use their declared method
+      scopes and exact target shapes; this blocks same-name decoys and malformed
+      assignments without altering model semantics.
 
 ## Next
 

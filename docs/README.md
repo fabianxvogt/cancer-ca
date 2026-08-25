@@ -103,8 +103,11 @@ parsing and reproducibility guard only; it does not normalize source files or
 execute the model. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-encoding-boundary.md`](agent-wave-2026-08-25-legacy-encoding-boundary.md).
 
-It also rejects more than one simple-name or attribute assignment for either
-contract field instead of silently selecting the first AST match. This keeps a
-source file with ambiguous legacy constants blocked without changing model
-behavior; evidence is recorded in
-[`agent-wave-2026-08-25-legacy-duplicate-assignment.md`](agent-wave-2026-08-25-legacy-duplicate-assignment.md).
+It rejects more than one assignment for either contract field instead of
+silently selecting the first AST match. It also requires the exact declared
+scope and target shape: `self.local_division_rate` in
+`AdvancedTumorCA.__init__`, and local `division_prob` in
+`AdvancedTumorCA.rule_a_proliferation`. This keeps unrelated same-name decoys,
+wrong receivers, and malformed assignment shapes blocked without changing
+model behavior; evidence is recorded in
+[`agent-wave-2026-08-25-legacy-scope-shape.md`](agent-wave-2026-08-25-legacy-scope-shape.md).

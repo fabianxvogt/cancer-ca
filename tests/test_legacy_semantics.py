@@ -130,6 +130,49 @@ def test_contract_rejects_duplicate_assignments(tmp_path: Path):
         inspect_contract(candidate)
 
 
+def test_contract_ignores_same_names_outside_declared_scopes(tmp_path: Path):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    decoy = (
+        "def unrelated_helper():\n"
+        "    local_division_rate = 99.0\n"
+        "    division_prob = 0.1\n\n"
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(decoy + source, encoding="utf-8")
+
+    contract = inspect_contract(candidate)
+
+    assert contract["default_rate"] == 4.0
+    assert contract["gate_scale"] == 0.8
+
+
+@pytest.mark.parametrize(
+    ("needle", "replacement", "message"),
+    [
+        (
+            "self.local_division_rate = np.ones((size, size)) * 4.0",
+            "config.local_division_rate = np.ones((size, size)) * 4.0",
+            "local_division_rate must target self.local_division_rate",
+        ),
+        (
+            "division_prob = self.local_division_rate * 0.8",
+            "self.division_prob = self.local_division_rate * 0.8",
+            "division_prob must target division_prob",
+        ),
+    ],
+)
+def test_contract_rejects_wrong_assignment_target_shape(
+    tmp_path: Path, needle: str, replacement: str, message: str
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(needle, replacement, 1)
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    with pytest.raises(ValueError, match=message):
+        inspect_contract(candidate)
+
+
 def test_contract_cli_reports_missing_source_without_traceback(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):

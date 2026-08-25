@@ -15,7 +15,7 @@ import json
 import math
 from pathlib import Path
 import sys
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 
 SOURCE_PATH = Path(__file__).resolve().parents[1] / "tumor_ca.py"
@@ -48,23 +48,132 @@ OWNER_DECISION_BOUNDARY = {
 }
 
 
-def _assignment(tree: ast.AST, target_name: str) -> ast.AST:
-    """Return the value assigned to a simple name or attribute."""
+_CONTRACT_ASSIGNMENTS = {
+    "local_division_rate": {
+        "class_name": "AdvancedTumorCA",
+        "method_name": "__init__",
+        "receiver": "self",
+    },
+    "division_prob": {
+        "class_name": "AdvancedTumorCA",
+        "method_name": "rule_a_proliferation",
+        "receiver": None,
+    },
+}
 
-    matches = []
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+
+def _scoped_method(tree: ast.AST, class_name: str, method_name: str) -> ast.AST:
+    """Return one top-level class method used by the source contract."""
+
+    classes = [
+        node
+        for node in getattr(tree, "body", [])
+        if isinstance(node, ast.ClassDef) and node.name == class_name
+    ]
+    if len(classes) != 1:
+        raise ValueError(f"expected exactly one top-level class {class_name!r}")
+
+    methods = [
+        node
+        for node in classes[0].body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name == method_name
+    ]
+    if len(methods) != 1:
+        raise ValueError(
+            f"expected exactly one method {class_name}.{method_name}"
+        )
+    return methods[0]
+
+
+def _scoped_nodes(method: ast.AST):
+    """Yield statement descendants without entering nested definitions."""
+
+    pending = list(method.body)
+    while pending:
+        node = pending.pop()
+        yield node
+        if isinstance(
+            node,
+            (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef),
+        ):
             continue
-        target = node.targets[0]
-        if isinstance(target, ast.Name) and target.id == target_name:
-            matches.append(node.value)
-        elif isinstance(target, ast.Attribute) and target.attr == target_name:
-            matches.append(node.value)
-    if len(matches) > 1:
+        pending.extend(ast.iter_child_nodes(node))
+
+
+def _assignment_targets(node: ast.AST):
+    """Return assignment targets for statement forms that could shadow a field."""
+
+    if isinstance(node, ast.Assign):
+        return node.targets
+    if isinstance(node, (ast.AnnAssign, ast.AugAssign)):
+        return [node.target]
+    return []
+
+
+def _mentions_target(target: ast.AST, target_name: str) -> bool:
+    """Check whether a target contains the contract name in any assignment shape."""
+
+    return any(
+        (isinstance(node, ast.Name) and node.id == target_name)
+        or (isinstance(node, ast.Attribute) and node.attr == target_name)
+        for node in ast.walk(target)
+    )
+
+
+def _is_expected_target(
+    target: ast.AST, target_name: str, receiver: Optional[str]
+) -> bool:
+    if receiver is None:
+        return isinstance(target, ast.Name) and target.id == target_name
+    return (
+        isinstance(target, ast.Attribute)
+        and isinstance(target.value, ast.Name)
+        and target.value.id == receiver
+        and target.attr == target_name
+    )
+
+
+def _assignment(tree: ast.AST, target_name: str) -> ast.AST:
+    """Return one exact contract assignment from its declared source scope."""
+
+    try:
+        spec = _CONTRACT_ASSIGNMENTS[target_name]
+    except KeyError as exc:
+        raise ValueError(f"unknown contract assignment {target_name!r}") from exc
+
+    method = _scoped_method(tree, spec["class_name"], spec["method_name"])
+    candidates = []
+    for node in _scoped_nodes(method):
+        targets = _assignment_targets(node)
+        if any(_mentions_target(target, target_name) for target in targets):
+            candidates.append(node)
+
+    if len(candidates) > 1:
         raise ValueError(f"multiple assignments found for {target_name!r}")
-    if matches:
-        return matches[0]
-    raise ValueError(f"could not find assignment for {target_name!r}")
+    if not candidates:
+        raise ValueError(
+            f"could not find assignment for {target_name!r} in "
+            f"{spec['class_name']}.{spec['method_name']}"
+        )
+
+    node = candidates[0]
+    if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+        raise ValueError(
+            f"{target_name} must use one plain assignment in "
+            f"{spec['class_name']}.{spec['method_name']}"
+        )
+    if not _is_expected_target(node.targets[0], target_name, spec["receiver"]):
+        expected = (
+            f"{spec['receiver']}.{target_name}"
+            if spec["receiver"]
+            else target_name
+        )
+        raise ValueError(
+            f"{target_name} must target {expected} in "
+            f"{spec['class_name']}.{spec['method_name']}"
+        )
+    return node.value
 
 
 def _right_hand_constant(expression: ast.AST, label: str) -> float:
