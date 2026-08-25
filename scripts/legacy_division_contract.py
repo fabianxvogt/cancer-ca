@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import copy
 import json
 import math
 from pathlib import Path
@@ -256,7 +257,8 @@ def inspect_contract(path: Path = SOURCE_PATH) -> Dict[str, Any]:
         "threshold_in_unit_interval": 0.0 <= threshold <= 1.0,
         "calibration_thresholds": _calibration_rows(gate_scale),
         "saturation": _saturation_contract(gate_scale),
-        "owner_decision_boundary": OWNER_DECISION_BOUNDARY,
+        # Return an isolated payload so callers cannot mutate future reports.
+        "owner_decision_boundary": copy.deepcopy(OWNER_DECISION_BOUNDARY),
         "scope": "source-level legacy semantics contract; no model execution",
     }
 

@@ -111,3 +111,8 @@ scope and target shape: `self.local_division_rate` in
 wrong receivers, and malformed assignment shapes blocked without changing
 model behavior; evidence is recorded in
 [`agent-wave-2026-08-25-legacy-scope-shape.md`](agent-wave-2026-08-25-legacy-scope-shape.md).
+
+The returned owner-decision metadata is deep-copied per report. This prevents a
+caller mutating one nested report field from changing later reports for the same
+source, preserving deterministic JSON output. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-report-isolation.md`](agent-wave-2026-08-25-legacy-report-isolation.md).

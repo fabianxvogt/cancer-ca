@@ -37,6 +37,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] Require the legacy-contract assignments to use their declared method
       scopes and exact target shapes; this blocks same-name decoys and malformed
       assignments without altering model semantics.
+- [x] Return an isolated owner-decision payload from the legacy contract probe;
+      repeated reports remain deterministic if a caller mutates one result.
 
 ## Next
 
@@ -75,3 +77,5 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       record and verified the public remote/push-clean state.
 - [x] 2026-08-25: made non-UTF-8 legacy-contract inputs return an explicit
       blocked result instead of leaking a decoding traceback.
+- [x] 2026-08-25: isolated mutable owner-decision metadata from returned legacy
+      contract reports; this hardens reproducibility without changing semantics.

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -87,6 +88,25 @@ def test_calibration_probe_preserves_exact_owner_decision_boundary():
             "regenerate figures, update JSON results, or change dependencies."
         ),
     }
+
+
+def test_contract_reports_are_isolated_and_deterministic():
+    source = Path("tumor_ca.py")
+    first = inspect_contract(source)
+    baseline = json.dumps(first, sort_keys=True)
+
+    first["owner_decision_boundary"]["semantic_options"].append("unexpected")
+    first["owner_decision_boundary"]["selected_semantics"] = "mutated"
+
+    second = inspect_contract(source)
+
+    assert json.dumps(second, sort_keys=True) == baseline
+    assert second["owner_decision_boundary"]["selected_semantics"] is None
+    assert "unexpected" not in second["owner_decision_boundary"]["semantic_options"]
+    assert (
+        second["owner_decision_boundary"]
+        is not first["owner_decision_boundary"]
+    )
 
 
 def test_contract_rejects_a_clamped_or_non_multiplicative_gate(tmp_path: Path):
