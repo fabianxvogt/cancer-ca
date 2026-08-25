@@ -6,6 +6,13 @@ The project README and any document marked `human-owned` remain authoritative. D
 
 Never store credentials, private data, generated output, logs, datasets, or build artifacts here. Preserve unrelated local work and keep each change focused.
 
+## Current owner review
+
+The latest roadmap disposition for the dual-metric figure, rule ablation, and
+`local_division_rate` calibration is recorded in
+[`roadmap-review-2026-08-25.md`](roadmap-review-2026-08-25.md). It is a documentation
+and evidence-boundary note; it does not close a scientific roadmap item.
+
 ## Deferred calibration finding
 
 The local research scripts currently expose a scale mismatch: `local_division_rate` is used as a probability-like threshold, but the observed calculation is not guaranteed to remain in the unit interval. Untreated trajectories also use deterministic choices, so changing that scale or introducing stochastic behavior could alter existing results and published figures.

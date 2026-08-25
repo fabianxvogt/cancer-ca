@@ -2,6 +2,8 @@
 
 Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 
+Current owner review: [dual-metric, rule-ablation, and calibration disposition](docs/roadmap-review-2026-08-25.md).
+
 ## Now
 
 - [x] Publish repo as `fabianxvogt/cancer-ca` (published 2026-08-22; public
