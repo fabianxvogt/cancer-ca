@@ -66,6 +66,15 @@ exact pins. This does not execute the figure or verify its numerical results. It
 evidence is recorded in
 [`agent-wave-2026-08-25-dual-metric-preflight.md`](agent-wave-2026-08-25-dual-metric-preflight.md).
 
+## Manuscript reference contract
+
+The structural smoke parses `paper.tex` for LaTeX `\\ref{...}` and `\\label{...}`
+tokens and fails on undefined references. This is a metadata-only consistency
+check: it does not compile the manuscript, import scientific dependencies, execute
+figure scripts, inspect image contents, or validate the reported results. The
+current evidence is recorded in
+[`agent-wave-2026-08-25-manuscript-figure-contract.md`](agent-wave-2026-08-25-manuscript-figure-contract.md).
+
 ## Calibration contract probe
 
 Run `python3 scripts/legacy_division_contract.py` to inspect the legacy division

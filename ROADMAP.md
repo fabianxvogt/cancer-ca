@@ -18,6 +18,7 @@ Current owner review: [dual-metric, rule-ablation, and calibration disposition](
 - [x] Check direct `core_experiment.py` imports against the distribution-pin map without importing dependencies.
 - [x] Check all committed `figure*.py` imports against the distribution-pin map without importing dependencies.
 - [x] Guard the figure-source pin contract with an explicit inventory matching the figure map.
+- [x] Guard manuscript cross-references against undefined LaTeX labels.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 
@@ -50,5 +51,7 @@ Current owner review: [dual-metric, rule-ablation, and calibration disposition](
       full scientific claims remain outside the smoke's scope.
 - [x] 2026-08-25: added metadata-only coverage for required smoke-import pins;
       this does not imply scientific comparability.
+- [x] 2026-08-25: reconciled an undefined manuscript figure reference with the
+      existing phase-boundaries table; no figures were regenerated.
 - [x] 2026-08-25: reconciled the publication checkbox with the root portfolio
       record and verified the public remote/push-clean state.

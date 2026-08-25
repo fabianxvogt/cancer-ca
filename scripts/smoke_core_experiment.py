@@ -55,6 +55,7 @@ REQUIRED_IMPORTS = {
 REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
 CORE_EXPERIMENT_PATH = Path(__file__).resolve().parents[1] / "core_experiment.py"
 DUAL_METRIC_FIGURE_PATH = Path(__file__).resolve().parents[1] / "figure_S1_metric_dependence.py"
+PAPER_PATH = Path(__file__).resolve().parents[1] / "paper.tex"
 PROJECT_MODULES = frozenset({"tumor_ca", "stability_metrics"})
 FIGURE_SOURCE_INVENTORY = (
     "figure1_concept.py",
@@ -102,6 +103,23 @@ def figure_source_inventory_gaps(
         for name in sorted(inventory_names - discovered_names)
     )
     return tuple(gaps)
+
+
+def manuscript_reference_gaps(paper_text: str | None = None) -> tuple[str, ...]:
+    """Return undefined LaTeX references in the manuscript.
+
+    This is a metadata-only check. It parses ``\\ref`` and ``\\label`` tokens;
+    it does not compile the paper, import scientific dependencies, execute a
+    figure script, or inspect figure contents.
+    """
+
+    manuscript = PAPER_PATH.read_text(encoding="utf-8") if paper_text is None else paper_text
+    references = set(re.findall(r"\\ref\{([^}]+)\}", manuscript))
+    labels = set(re.findall(r"\\label\{([^}]+)\}", manuscript))
+    return tuple(
+        f"{reference} is referenced but not defined"
+        for reference in sorted(references - labels)
+    )
 
 
 def pinned_requirements(path: Path = REQUIREMENTS_PATH) -> dict[str, str]:
@@ -297,6 +315,11 @@ def run_smoke(
     if inventory_gaps:
         details = "; ".join(inventory_gaps)
         raise RuntimeError(f"figure-source inventory is out of sync: {details}")
+
+    reference_gaps = manuscript_reference_gaps()
+    if reference_gaps:
+        details = "; ".join(reference_gaps)
+        raise RuntimeError(f"paper references are out of sync: {details}")
 
     for source_label, source_path in SOURCE_PIN_CONTRACTS.items():
         source_pin_gaps = source_dependency_pin_gaps(source_path)

@@ -18,6 +18,7 @@ from scripts.smoke_core_experiment import (
     pinned_requirements,
     required_dependency_pin_gaps,
     source_dependency_pin_gaps,
+    manuscript_reference_gaps,
     validate_results,
 )
 
@@ -150,6 +151,21 @@ def test_figure_source_inventory_reports_added_and_removed_sources():
     ) == (
         "figure8_new.py is not in the explicit figure-source inventory",
         "figure2_main_result.py is missing from figure-source discovery",
+    )
+
+
+def test_manuscript_references_have_labels():
+    assert manuscript_reference_gaps() == ()
+
+
+def test_manuscript_reference_contract_reports_undefined_labels():
+    assert manuscript_reference_gaps(
+        paper_text=(
+            r"Figure~\ref{fig:defined} and Table~\ref{tab:missing}."
+            r"\label{fig:defined}"
+        ),
+    ) == (
+        "tab:missing is referenced but not defined",
     )
 
 
