@@ -15,6 +15,7 @@ import json
 from importlib import metadata
 from pathlib import Path
 import re
+import subprocess
 import sys
 from contextlib import redirect_stdout
 from io import StringIO
@@ -56,6 +57,7 @@ REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
 CORE_EXPERIMENT_PATH = Path(__file__).resolve().parents[1] / "core_experiment.py"
 DUAL_METRIC_FIGURE_PATH = Path(__file__).resolve().parents[1] / "figure_S1_metric_dependence.py"
 PAPER_PATH = Path(__file__).resolve().parents[1] / "paper.tex"
+IMAGE_SUFFIXES = frozenset({".eps", ".jpeg", ".jpg", ".pdf", ".png", ".svg"})
 PROJECT_MODULES = frozenset({"tumor_ca", "stability_metrics"})
 FIGURE_SOURCE_INVENTORY = (
     "figure1_concept.py",
@@ -120,6 +122,65 @@ def manuscript_reference_gaps(paper_text: str | None = None) -> tuple[str, ...]:
         f"{reference} is referenced but not defined"
         for reference in sorted(references - labels)
     )
+
+
+def committed_image_inventory() -> tuple[str, ...]:
+    """Return committed image paths without inspecting image contents."""
+
+    result = subprocess.run(
+        ["git", "ls-files", "--", "images/*"],
+        cwd=PAPER_PATH.parent,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return tuple(
+        sorted(
+            path
+            for path in result.stdout.splitlines()
+            if Path(path).suffix.lower() in IMAGE_SUFFIXES
+        )
+    )
+
+
+def manuscript_asset_gaps(
+    paper_text: str | None = None,
+    committed_images: Iterable[str] | None = None,
+) -> tuple[str, ...]:
+    """Return metadata gaps between manuscript figure mentions and image inventory.
+
+    The contract checks only LaTeX image paths, committed image paths, and
+    supplementary ``Figure S<n>`` mentions. It does not compile the paper,
+    import scientific dependencies, execute a figure script, or inspect image
+    contents.
+    """
+
+    manuscript = PAPER_PATH.read_text(encoding="utf-8") if paper_text is None else paper_text
+    inventory = (
+        set(committed_image_inventory())
+        if committed_images is None
+        else set(committed_images)
+    )
+    included = set(
+        re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", manuscript)
+    )
+    gaps = [
+        f"{path} is included but not committed"
+        for path in sorted(included - inventory)
+    ]
+
+    mentioned_supplementary = set(
+        re.findall(r"Figure(?:~|[ \t]+)S(\d+)\b", manuscript)
+    )
+    for number in sorted(mentioned_supplementary, key=int):
+        prefix = f"images/figure_S{number}_"
+        has_committed_asset = any(path.startswith(prefix) for path in inventory)
+        has_included_asset = any(path.startswith(prefix) for path in included)
+        if has_committed_asset and not has_included_asset:
+            gaps.append(
+                f"Figure S{number} is mentioned but no matching committed image is included"
+            )
+    return tuple(gaps)
 
 
 def pinned_requirements(path: Path = REQUIREMENTS_PATH) -> dict[str, str]:
@@ -320,6 +381,11 @@ def run_smoke(
     if reference_gaps:
         details = "; ".join(reference_gaps)
         raise RuntimeError(f"paper references are out of sync: {details}")
+
+    asset_gaps = manuscript_asset_gaps()
+    if asset_gaps:
+        details = "; ".join(asset_gaps)
+        raise RuntimeError(f"paper assets are out of sync: {details}")
 
     for source_label, source_path in SOURCE_PIN_CONTRACTS.items():
         source_pin_gaps = source_dependency_pin_gaps(source_path)

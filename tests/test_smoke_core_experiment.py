@@ -18,6 +18,7 @@ from scripts.smoke_core_experiment import (
     pinned_requirements,
     required_dependency_pin_gaps,
     source_dependency_pin_gaps,
+    manuscript_asset_gaps,
     manuscript_reference_gaps,
     validate_results,
 )
@@ -156,6 +157,28 @@ def test_figure_source_inventory_reports_added_and_removed_sources():
 
 def test_manuscript_references_have_labels():
     assert manuscript_reference_gaps() == ()
+
+
+def test_manuscript_assets_match_committed_inventory():
+    assert manuscript_asset_gaps() == ()
+
+
+def test_manuscript_asset_contract_reports_unincluded_supplementary_asset():
+    assert manuscript_asset_gaps(
+        paper_text=r"See Figure~S2 for the parameter sensitivity result.",
+        committed_images=("images/figure_S2_parameter_sensitivity.png",),
+    ) == (
+        "Figure S2 is mentioned but no matching committed image is included",
+    )
+
+
+def test_manuscript_asset_contract_reports_uncommitted_includegraphics_path():
+    assert manuscript_asset_gaps(
+        paper_text=r"\includegraphics{images/missing.png}",
+        committed_images=(),
+    ) == (
+        "images/missing.png is included but not committed",
+    )
 
 
 def test_manuscript_reference_contract_reports_undefined_labels():

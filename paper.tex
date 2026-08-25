@@ -344,9 +344,27 @@ To address the acknowledged limitation that ``sensitivity untested,'' we conduct
 
 \paragraph{Parameter sensitivity (Figure S2):} We varied metronomic dose from 0.01 to 0.30 while holding MTD at 1.0. The trade-off magnitude (MTD resistance $-$ metronomic resistance) decreases as metronomic dose approaches MTD intensity, but persists across the full range tested. At low metronomic doses ($<0.05$), the resistance gap exceeds 45\%. At high doses ($>0.20$), the gap narrows to $\sim$10\% but remains positive, confirming MTD consistently drives higher resistance evolution than lower-dose continuous therapy.
 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/figure_S2_parameter_sensitivity.png}
+\caption*{\textbf{Figure S2: Parameter sensitivity.} MTD versus metronomic resistance across the tested metronomic-dose range.}
+\end{figure}
+
 \paragraph{Reversibility mechanisms (Figure S3):} We extended the CA to include partial reversibility: (1) dead cells resurrect to sensitive state with probability 0.01, (2) resistant cells revert to sensitive with probability 0.001. Across four scenarios (baseline irreversible, resurrection only, reversion only, both mechanisms), MTD consistently produces higher resistance than metronomic therapy. Reversibility mechanisms reduce absolute resistance levels for both protocols but \textit{preserve the qualitative ranking}: MTD $>$ metronomic. This demonstrates the trade-off does not require strict irreversibility---it persists even when evolutionary changes are partially reversible.
 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/figure_S3_reversibility.png}
+\caption*{\textbf{Figure S3: Reversibility mechanisms.} Resistance outcomes under the tested partial-reversibility scenarios.}
+\end{figure}
+
 \paragraph{Finite-size effects (Figure S4):} We tested three grid sizes: 60$\times$60, 120$\times$120, 240$\times$240 (corresponding to $\sim$3600, 14400, 57600 total sites). MTD produced higher final resistance than metronomic therapy at all three scales (60$\times$60: 52\% vs 4\%; 120$\times$120: 70\% vs 25\%; 240$\times$240: 90\% vs 78\%). The absolute values shift with grid size---larger grids support higher resistance due to increased spatial buffering---but the qualitative trade-off (high-dose intermittent $\to$ high resistance; low-dose continuous $\to$ lower resistance) holds across spatial scales. This confirms results are not artifacts of the baseline 120$\times$120 configuration.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/figure_S4_grid_size.png}
+\caption*{\textbf{Figure S4: Finite-size effects.} Resistance outcomes across the tested grid sizes.}
+\end{figure}
 
 \paragraph{Interpretation:} These tests do not prove \textit{universality}---they remain within the CA framework with fixed Moore neighborhood, discrete states, and simplified therapy kinetics. But they demonstrate the trade-off is not brittle to: (1) metronomic dose choice, (2) strict irreversibility assumptions, or (3) specific grid size. The correlation weakens as metronomic dose increases (narrowing the protocol difference), as expected. The key insight---that sustained high-intensity therapy drives irreversible evolutionary shifts while lower continuous therapy maintains compositional diversity---persists across these parameter variations.
 

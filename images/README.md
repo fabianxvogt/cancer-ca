@@ -1,8 +1,10 @@
 # Paper Figures - Quick Reference
 
-## ✅ ALL 6 FIGURES GENERATED AND READY
+## ✅ ALL MANUSCRIPT FIGURES GENERATED AND READY
 
-All figures are in `/images/` folder at **300 DPI** publication quality.
+The six main figures and three supplementary figures included by `paper.tex` are
+in this folder. The committed `figure_S1_metric_dependence.py` source is a
+separate, not-yet-rendered exploratory source and is not listed as a paper asset.
 
 ## Figure Overview
 
@@ -14,6 +16,14 @@ All figures are in `/images/` folder at **300 DPI** publication quality.
 | 4 | `figure4_spatial_evolution.png` | Spatial evolutionary regime shift visualization | ✓ Ready |
 | 5 | `figure5_robustness.png` | Seed/size/intensity robustness | ✓ Ready |
 | 6 | `figure6_parameter_space.png` | Global parameter space (ρ = -0.960) | ✓ Ready |
+
+## Supplementary Figures
+
+| # | Filename | Purpose | Status |
+|---|----------|---------|--------|
+| S2 | `figure_S2_parameter_sensitivity.png` | Metronomic-dose sensitivity | ✓ Included in `paper.tex` |
+| S3 | `figure_S3_reversibility.png` | Partial-reversibility scenarios | ✓ Included in `paper.tex` |
+| S4 | `figure_S4_grid_size.png` | Finite-size effects | ✓ Included in `paper.tex` |
 
 ## LaTeX Integration
 
@@ -30,7 +40,8 @@ pdflatex paper.tex
 pdflatex paper.tex  # Run twice for references
 ```
 
-The PDF will automatically include all 6 figures.
+The PDF will automatically include the six main figures and the three
+supplementary figures listed above.
 
 ## Figure Generation Scripts
 

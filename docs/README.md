@@ -75,6 +75,11 @@ figure scripts, inspect image contents, or validate the reported results. The
 current evidence is recorded in
 [`agent-wave-2026-08-25-manuscript-figure-contract.md`](agent-wave-2026-08-25-manuscript-figure-contract.md).
 
+It also checks that every manuscript `\\includegraphics` path is committed and
+that each mentioned supplementary figure with a committed asset is actually
+included. This is a metadata-only asset check; its evidence is recorded in
+[`agent-wave-2026-08-25-manuscript-asset-contract.md`](agent-wave-2026-08-25-manuscript-asset-contract.md).
+
 ## Calibration contract probe
 
 Run `python3 scripts/legacy_division_contract.py` to inspect the legacy division

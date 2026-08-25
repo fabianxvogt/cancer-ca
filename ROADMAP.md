@@ -19,6 +19,8 @@ Current owner review: [dual-metric, rule-ablation, and calibration disposition](
 - [x] Check all committed `figure*.py` imports against the distribution-pin map without importing dependencies.
 - [x] Guard the figure-source pin contract with an explicit inventory matching the figure map.
 - [x] Guard manuscript cross-references against undefined LaTeX labels.
+- [x] Guard manuscript image paths and supplementary figure inclusions against
+      the committed image inventory.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 
@@ -53,5 +55,7 @@ Current owner review: [dual-metric, rule-ablation, and calibration disposition](
       this does not imply scientific comparability.
 - [x] 2026-08-25: reconciled an undefined manuscript figure reference with the
       existing phase-boundaries table; no figures were regenerated.
+- [x] 2026-08-25: reconciled committed supplementary Figures S2–S4 with their
+      manuscript image inclusions and added a dependency-free asset contract.
 - [x] 2026-08-25: reconciled the publication checkbox with the root portfolio
       record and verified the public remote/push-clean state.
