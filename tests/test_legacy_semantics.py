@@ -782,6 +782,49 @@ def test_contract_parser_keeps_unusual_source_diagnostics_line_safe(
     assert all(character.isprintable() for character in captured.err[:-1])
 
 
+@pytest.mark.parametrize(
+    ("filename", "expected_suffix"),
+    [
+        ("unicode\u2028separator.py", r"unicode\u2028separator.py"),
+        ("unicode\u2029separator.py", r"unicode\u2029separator.py"),
+        ("back\\slash.py", "back\\slash.py"),
+        ('quote"single\'.py', 'quote"single\'.py'),
+        ("trailing-escape-\x1b", r"trailing-escape-\x1b"),
+        ("trailing-tab-\t", r"trailing-tab-\t"),
+        ("trailing-cr-\r", r"trailing-cr-\r"),
+        ("literal-backslash-at-end\\", "literal-backslash-at-end\\"),
+    ],
+)
+def test_contract_parser_preserves_unusual_valid_path_text(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    filename: str,
+    expected_suffix: str,
+):
+    invalid = tmp_path / filename
+    invalid.write_text("class Broken:\n    value =\n", encoding="utf-8")
+
+    raw_path = str(invalid)
+    expected_path = (
+        raw_path if raw_path.isprintable() else repr(raw_path)[1:-1]
+    )
+    assert expected_path.endswith(expected_suffix)
+    message = f"invalid syntax ({expected_path}, line 2)"
+
+    with pytest.raises(ValueError) as excinfo:
+        inspect_contract(invalid)
+    assert str(excinfo.value) == message
+    assert all(character.isprintable() for character in str(excinfo.value))
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
+    assert captured.err.count("\n") == 1
+    assert all(character.isprintable() for character in captured.err[:-1])
+
+
 def test_contract_cli_escapes_control_characters_in_missing_path(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):

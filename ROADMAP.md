@@ -57,6 +57,10 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       malformed strings/f-strings, mismatched delimiters, C0 controls, and
       Unicode line separators; no additional API/CLI defect was reproduced,
       and the one-line diagnostic boundary is regression-tested.
+- [x] Audit parser diagnostics for unusual valid filesystem path text,
+      including Unicode separators, backslashes, quotes, trailing controls,
+      and a literal trailing backslash; no additional API/CLI defect was
+      reproduced, and exact API/CLI path-display parity is regression-tested.
 - [x] Reject loop-target rebindings of legacy-contract values instead of
       silently accepting a later shadowing source assignment.
 - [x] Reject named-expression rebindings of legacy-contract values instead of
@@ -125,6 +129,10 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] 2026-08-25: audited unusual `SyntaxError` messages and raw source control
       characters; no runtime change was warranted because the wrapper excludes
       `SyntaxError.text` and keeps API/CLI diagnostics line-safe.
+- [x] 2026-08-25: audited valid filesystem path text containing Unicode
+      separators, backslashes, quotes, trailing controls, and a trailing
+      backslash; no runtime change was warranted because API/CLI diagnostics
+      already preserve printable text and escape non-printable text line-safely.
 - [x] 2026-08-25: rejected loop-target rebindings of legacy-contract values so
       exact source reports cannot ignore a later shadowing binding.
 - [x] 2026-08-25: rejected named-expression rebindings of legacy-contract values

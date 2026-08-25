@@ -160,6 +160,14 @@ stderr remain one-line and free of source control characters. No additional
 defect was reproduced; evidence is recorded in
 [`agent-wave-2026-08-25-legacy-parser-message-safety.md`](agent-wave-2026-08-25-legacy-parser-message-safety.md).
 
+A path-text follow-up exercises valid filenames containing Unicode line and
+paragraph separators, backslashes, quotes, trailing control characters, and a
+literal trailing backslash. Printable path text remains exact, while
+non-printable path text uses the existing escaped representation so API and CLI
+diagnostics stay one-line and agree. No additional defect was reproduced;
+evidence is recorded in
+[`agent-wave-2026-08-25-legacy-parser-path-text.md`](agent-wave-2026-08-25-legacy-parser-path-text.md).
+
 The probe also treats `for` targets that rebind either reported contract value
 as blocked source input. Without this check, a later loop target could shadow a
 previously recognized plain assignment while the report still claimed the
