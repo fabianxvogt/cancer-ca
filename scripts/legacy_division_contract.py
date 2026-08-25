@@ -185,7 +185,10 @@ def _right_hand_constant(expression: ast.AST, label: str) -> float:
     value = expression.right
     if not isinstance(value, ast.Constant) or type(value.value) not in (int, float):
         raise ValueError(f"{label} must use a numeric scalar multiplier")
-    result = float(value.value)
+    try:
+        result = float(value.value)
+    except OverflowError as exc:
+        raise ValueError(f"{label} multiplier must be finite") from exc
     if not math.isfinite(result):
         raise ValueError(f"{label} multiplier must be finite")
     if label == "division_prob" and result <= 0.0:

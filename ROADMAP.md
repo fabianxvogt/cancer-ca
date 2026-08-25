@@ -43,6 +43,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       invalid source contracts remain explicit API errors and CLI blocks.
 - [x] Reject finite constants whose derived legacy-contract thresholds or
       saturation boundary overflow to non-finite report values.
+- [x] Convert oversized integer multiplier literals into explicit blocked
+      contract results instead of leaking float-conversion tracebacks.
 
 ## Next
 
@@ -87,3 +89,5 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       saturation boundary, preventing an uncaught division-by-zero traceback.
 - [x] 2026-08-25: rejected non-finite derived contract values so finite source
       constants cannot leak `Infinity` into the JSON evidence report.
+- [x] 2026-08-25: converted oversized integer multiplier literals into the
+      established API `ValueError` and CLI status-2 boundary.

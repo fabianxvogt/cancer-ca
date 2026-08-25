@@ -193,6 +193,30 @@ def test_contract_rejects_negative_or_nonfinite_gate_constants(
         inspect_contract(candidate)
 
 
+def test_contract_rejects_integer_multiplier_that_overflows_float_conversion(
+    tmp_path: Path,
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "division_prob = self.local_division_rate * 0.8",
+        "division_prob = self.local_division_rate * " + "9" * 400,
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    message = "division_prob multiplier must be finite"
+    with pytest.raises(ValueError, match=message):
+        inspect_contract(candidate)
+
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+        assert main(["--path", str(candidate)]) == 2
+    assert stdout.getvalue() == ""
+    assert stderr.getvalue() == f"CONTRACT BLOCKED: {message}\n"
+
+
 @pytest.mark.parametrize(
     ("rate_replacement", "gate_replacement", "message"),
     [

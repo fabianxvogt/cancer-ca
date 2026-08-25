@@ -126,3 +126,9 @@ It also rejects finite source constants whose derived default threshold,
 calibration threshold, or saturation boundary overflows to a non-finite value.
 This keeps the dependency-free JSON report finite and deterministic; evidence is
 recorded in [`agent-wave-2026-08-25-legacy-derived-finiteness.md`](agent-wave-2026-08-25-legacy-derived-finiteness.md).
+
+Very large integer literals are also treated as blocked finite-multiplier input
+when Python cannot convert the AST value to a float. The API raises `ValueError`
+and the CLI returns status `2` without a traceback or partial JSON report; this
+boundary is documented in
+[`agent-wave-2026-08-25-legacy-integer-overflow.md`](agent-wave-2026-08-25-legacy-integer-overflow.md).
