@@ -658,6 +658,59 @@ def test_contract_parser_reports_embedded_null_location(
     assert captured.err == f"CONTRACT BLOCKED: {message}\n"
 
 
+def test_contract_parser_preserves_crlf_multiline_first_null_boundary(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid = tmp_path / "nested" / "crlf-multiline-nul.py"
+    invalid.parent.mkdir()
+    invalid.write_bytes(
+        b"class Broken:\r\n"
+        b"    value = 1\r\n"
+        b"\r\n"
+        b"    \x00\r\n"
+        b"    \x00\r\n"
+    )
+
+    message = (
+        f"source code string cannot contain null bytes ({invalid}, "
+        "line 4, column 5)"
+    )
+    with pytest.raises(ValueError) as excinfo:
+        inspect_contract(invalid)
+    assert str(excinfo.value) == message
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
+    assert captured.err.count("\n") == 1
+
+
+def test_contract_parser_preserves_mixed_line_endings_in_multiline_syntax(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    invalid = tmp_path / "nested" / "mixed-endings.py"
+    invalid.parent.mkdir()
+    invalid.write_bytes(
+        b"class Broken:\r\n"
+        b"    value =\n"
+        b"    trailing = 1\r\n"
+    )
+
+    message = f"invalid syntax ({invalid}, line 2)"
+    with pytest.raises(ValueError) as excinfo:
+        inspect_contract(invalid)
+    assert str(excinfo.value) == message
+
+    assert main(["--path", str(invalid)]) == 2
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
+    assert captured.err.count("\n") == 1
+
+
 def test_contract_cli_escapes_control_characters_in_missing_path(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):

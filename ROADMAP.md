@@ -50,6 +50,9 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 - [x] Preserve exact source filenames and parser locations in API/CLI errors;
       normalize syntax and embedded-NUL parser failures to the established
       `ValueError`/status-2 contract.
+- [x] Audit parser diagnostics across CRLF, mixed multiline source, and
+      repeated embedded-NUL fixtures; no additional API/CLI defect was
+      reproduced, and the deterministic line-safe boundary is regression-tested.
 - [x] Reject loop-target rebindings of legacy-contract values instead of
       silently accepting a later shadowing source assignment.
 - [x] Reject named-expression rebindings of legacy-contract values instead of
@@ -113,6 +116,8 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
       API/CLI errors so parser and file errors remain line-safe.
 - [x] 2026-08-25: preserved exact source paths and parser locations for syntax
       and embedded-NUL failures, keeping the API/CLI error boundary explicit.
+- [x] 2026-08-25: audited CRLF, mixed multiline source, and repeated embedded
+      NUL diagnostics; no runtime change was warranted after API/CLI checks.
 - [x] 2026-08-25: rejected loop-target rebindings of legacy-contract values so
       exact source reports cannot ignore a later shadowing binding.
 - [x] 2026-08-25: rejected named-expression rebindings of legacy-contract values

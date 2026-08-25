@@ -146,6 +146,12 @@ include a column. This keeps same-basename fixtures distinguishable without
 importing or executing the model. Evidence is recorded in
 [`agent-wave-2026-08-25-legacy-parser-diagnostics.md`](agent-wave-2026-08-25-legacy-parser-diagnostics.md).
 
+The follow-up line-ending audit covers raw CRLF, mixed CRLF/LF, multiline
+source, and repeated embedded-NUL fixtures. No additional API/CLI defect was
+reproduced; the regression coverage pins the existing deterministic first-NUL,
+line-safe status-2 boundary. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-parser-line-endings.md`](agent-wave-2026-08-25-legacy-parser-line-endings.md).
+
 The probe also treats `for` targets that rebind either reported contract value
 as blocked source input. Without this check, a later loop target could shadow a
 previously recognized plain assignment while the report still claimed the
