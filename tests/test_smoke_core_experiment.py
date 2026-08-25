@@ -8,11 +8,13 @@ from scripts.smoke_core_experiment import (
     DUAL_METRIC_FIGURE_PATH,
     EXPECTED_HISTORY_KEYS,
     EXPECTED_STRATEGIES,
+    FIGURE_SOURCE_INVENTORY,
     FIGURE_SOURCE_PIN_CONTRACTS,
     REQUIRED_IMPORTS,
     THERAPY_START,
     dependency_version_mismatches,
     direct_imported_modules,
+    figure_source_inventory_gaps,
     pinned_requirements,
     required_dependency_pin_gaps,
     source_dependency_pin_gaps,
@@ -126,13 +128,28 @@ def test_dual_metric_figure_import_contract_is_pinned():
 
 
 def test_all_committed_figure_scripts_have_pinned_direct_imports():
-    assert set(FIGURE_SOURCE_PIN_CONTRACTS) == {
-        path.name for path in DUAL_METRIC_FIGURE_PATH.parent.glob("figure*.py")
-    }
     assert REQUIRED_IMPORTS["seaborn"] == "seaborn"
     assert all(
         source_dependency_pin_gaps(path) == ()
         for path in FIGURE_SOURCE_PIN_CONTRACTS.values()
+    )
+
+
+def test_figure_source_inventory_matches_discovered_contract():
+    assert figure_source_inventory_gaps() == ()
+    assert all(
+        (DUAL_METRIC_FIGURE_PATH.parent / name).is_file()
+        for name in FIGURE_SOURCE_INVENTORY
+    )
+
+
+def test_figure_source_inventory_reports_added_and_removed_sources():
+    assert figure_source_inventory_gaps(
+        discovered={"figure1_concept.py", "figure8_new.py"},
+        inventory={"figure1_concept.py", "figure2_main_result.py"},
+    ) == (
+        "figure8_new.py is not in the explicit figure-source inventory",
+        "figure2_main_result.py is missing from figure-source discovery",
     )
 
 

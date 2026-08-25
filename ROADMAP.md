@@ -15,6 +15,7 @@ Living plan for the cancer-ca project. Status labels: `[ ]` open, `[x]` done.
 - [x] Verify every required smoke import has an exact distribution pin before environment checks.
 - [x] Check direct `core_experiment.py` imports against the distribution-pin map without importing dependencies.
 - [x] Check all committed `figure*.py` imports against the distribution-pin map without importing dependencies.
+- [x] Guard the figure-source pin contract with an explicit inventory matching the figure map.
 - [x] Add a minimal legacy-semantics smoke test and a bounded core-experiment smoke run.
 - [x] Pin the verified research dependency set in `requirements.txt`.
 

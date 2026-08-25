@@ -56,6 +56,15 @@ REQUIREMENTS_PATH = Path(__file__).resolve().parents[1] / "requirements.txt"
 CORE_EXPERIMENT_PATH = Path(__file__).resolve().parents[1] / "core_experiment.py"
 DUAL_METRIC_FIGURE_PATH = Path(__file__).resolve().parents[1] / "figure_S1_metric_dependence.py"
 PROJECT_MODULES = frozenset({"tumor_ca", "stability_metrics"})
+FIGURE_SOURCE_INVENTORY = (
+    "figure1_concept.py",
+    "figure2_main_result.py",
+    "figure3_temporal_dynamics.py",
+    "figure4_spatial_evolution.py",
+    "figure5_robustness.py",
+    "figure6_parameter_space.py",
+    "figure_S1_metric_dependence.py",
+)
 FIGURE_SOURCE_PIN_CONTRACTS = {
     path.name: path
     for path in sorted(DUAL_METRIC_FIGURE_PATH.parent.glob("figure*.py"))
@@ -70,6 +79,29 @@ def _normalize_distribution_name(name: str) -> str:
     """Normalize a distribution name using the packaging name convention."""
 
     return re.sub(r"[-_.]+", "-", name.strip()).lower()
+
+
+def figure_source_inventory_gaps(
+    discovered: Iterable[str] | None = None,
+    inventory: Iterable[str] = FIGURE_SOURCE_INVENTORY,
+) -> tuple[str, ...]:
+    """Return mismatches between discovered and explicitly reviewed figure sources."""
+
+    discovered_names = (
+        set(FIGURE_SOURCE_PIN_CONTRACTS)
+        if discovered is None
+        else set(discovered)
+    )
+    inventory_names = set(inventory)
+    gaps = [
+        f"{name} is not in the explicit figure-source inventory"
+        for name in sorted(discovered_names - inventory_names)
+    ]
+    gaps.extend(
+        f"{name} is missing from figure-source discovery"
+        for name in sorted(inventory_names - discovered_names)
+    )
+    return tuple(gaps)
 
 
 def pinned_requirements(path: Path = REQUIREMENTS_PATH) -> dict[str, str]:
@@ -260,6 +292,11 @@ def run_smoke(
         raise ValueError("size must be positive")
     if steps < THERAPY_START + 1:
         raise ValueError(f"steps must be at least {THERAPY_START + 1}")
+
+    inventory_gaps = figure_source_inventory_gaps()
+    if inventory_gaps:
+        details = "; ".join(inventory_gaps)
+        raise RuntimeError(f"figure-source inventory is out of sync: {details}")
 
     for source_label, source_path in SOURCE_PIN_CONTRACTS.items():
         source_pin_gaps = source_dependency_pin_gaps(source_path)
