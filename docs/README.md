@@ -138,3 +138,10 @@ messages, including parser errors, so line-oriented stderr remains one-line and
 deterministic. Printable paths retain their existing display. This is a
 reporting-only guard; evidence is recorded in
 [`agent-wave-2026-08-25-legacy-path-error-boundary.md`](agent-wave-2026-08-25-legacy-path-error-boundary.md).
+
+The probe also treats `for` targets that rebind either reported contract value
+as blocked source input. Without this check, a later loop target could shadow a
+previously recognized plain assignment while the report still claimed the
+original formula. This remains an exact source-contract guard; it does not
+import or execute the model. Evidence is recorded in
+[`agent-wave-2026-08-25-legacy-loop-rebind.md`](agent-wave-2026-08-25-legacy-loop-rebind.md).

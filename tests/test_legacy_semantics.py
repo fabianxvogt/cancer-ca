@@ -321,6 +321,30 @@ def test_contract_rejects_wrong_assignment_target_shape(
         inspect_contract(candidate)
 
 
+def test_contract_rejects_loop_rebinding_of_reported_value(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+):
+    source = Path("tumor_ca.py").read_text(encoding="utf-8")
+    source = source.replace(
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n",
+        "            division_prob = self.local_division_rate * 0.8  # Basis\n"
+        "            for division_prob in ():\n"
+        "                pass\n",
+        1,
+    )
+    candidate = tmp_path / "tumor_ca.py"
+    candidate.write_text(source, encoding="utf-8")
+
+    message = "multiple assignments found for 'division_prob'"
+    with pytest.raises(ValueError, match=message):
+        inspect_contract(candidate)
+
+    assert main(["--path", str(candidate)]) == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == f"CONTRACT BLOCKED: {message}\n"
+
+
 def test_contract_cli_reports_missing_source_without_traceback(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ):
