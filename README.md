@@ -128,6 +128,24 @@ legacy raw multiplier, gate scale, and derived threshold before any calibration
 change. It does not import the model, run a trajectory, or validate a scientific
 result.
 
+The optional bounded semantics-sensitivity screen compares the legacy `4.0` rule with the
+documented `1.0` unit-interval counterfactual without changing the model:
+`scripts/division_semantics_sensitivity.py`. On its one-seed reduced fixture,
+44.4%–56.6% of final cells change, response/burden rankings are preserved, and
+one pair of stability ranks swaps. The reduced Adaptive arm retains the source's
+absolute 500-cell cutoff and is therefore not scale-equivalent to the core
+120×120 policy. See the
+[sensitivity note](docs/agent-wave-2026-08-25-division-semantics-sensitivity.md)
+for the exact pinned-environment command and strict limits.
+
+A follow-up [Adaptive factorial audit](docs/agent-wave-2026-08-25-adaptive-semantics-factorial.md)
+crosses division semantics with unscaled versus capacity-scaled cutoffs and
+cross-yokes the realized dose paths across three seeds. Its 24 executions
+contain 16 unique tumor trajectories and four unique dose paths; eight exact
+replays are reproducibility checks. Under the scaled all-high path, bounded
+pretherapy response contrasts remain but change direction by seed. This is a
+software-model comparison, not a biological or clinical result.
+
 Figure ↔ script map:
 
 | Figure | Script |

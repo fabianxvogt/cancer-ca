@@ -92,6 +92,21 @@ Current owner review (all three items remain open): [dual-metric, rule-ablation,
 
 ## Done
 
+- [x] 2026-08-25: added a self-checking 24-execution, three-seed Adaptive
+      semantics × cutoff factorial with cross-yoked dose paths. Its 16 unique
+      tumor trajectories and four unique dose paths include eight exact replay
+      checks. Under the capacity-scaled all-high path, bounded pretherapy
+      response contrasts persist but change sign by seed, so no directional
+      claim is supported. [INCREMENTAL / EMPIRICAL bounded software-model
+      audit]
+- [x] 2026-08-25: added a self-checking fixed-seed division-semantics
+      sensitivity audit without changing model behavior. The documented `1.0`
+      counterfactual changes 44.4%–56.6% of final cells while preserving
+      response/burden ranks and swapping one stability-rank pair. Exact result
+      and full-trajectory replay fingerprints are enforced; the reduced
+      Adaptive arm's unscaled cutoff and changed dose exposure are documented.
+      Calibration remains an open owner decision. [INCREMENTAL / EMPIRICAL
+      bounded audit]
 - [x] Core model (`tumor_ca.py`) + stability metrics framework
 - [x] Core experiment: 5 strategies, response-vs-stability correlation
 - [x] Statistical validation: bootstrap CIs, 20-seed reproducibility, metric sign-flip discovery

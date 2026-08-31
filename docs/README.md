@@ -19,6 +19,17 @@ and evidence-boundary note; it does not close a scientific roadmap item.
   roadmap review is the current disposition, and no ablation contract is approved.
 - **Calibration:** the [`local_division_rate` decision memo](decision-memo-local-division-rate.md)
   keeps all three semantic readings open pending owner choice.
+  The [bounded sensitivity audit](agent-wave-2026-08-25-division-semantics-sensitivity.md)
+  compares the legacy rule with one documented unit-interval screen, preserving
+  the owner-decision boundary and making no biological claim. Its reduced
+  Adaptive arm preserves the source's absolute cutoff, so it is a bespoke
+  closed-loop fixture rather than a scale-equivalent core-policy reproduction.
+- The [Adaptive semantics × cutoff factorial](agent-wave-2026-08-25-adaptive-semantics-factorial.md)
+  adds three paired seeds, a capacity-fraction cutoff comparison, and
+  cross-yoked dose paths. Its 24 executions contain 16 unique tumor
+  trajectories and four unique dose paths, including eight exact replay checks.
+  Bounded response contrasts remain under the shared scaled all-high path,
+  while their seed-level direction is unstable.
 
 ## Deferred calibration finding
 
